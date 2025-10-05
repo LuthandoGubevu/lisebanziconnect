@@ -2,17 +2,6 @@
 
 import { cn } from "@/lib/utils";
 import {
-  SidebarProvider,
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarTrigger,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarInset,
-} from "@/components/ui/sidebar";
-import {
   BookOpenText,
   CalendarDays,
   HelpCircle,
@@ -24,71 +13,47 @@ import { usePathname } from "next/navigation";
 import React from "react";
 
 const navItems = [
-  { href: "/", label: "Home", icon: <LayoutDashboard /> },
-  { href: "/ask-a-mentor", label: "Ask a Mentor", icon: <HelpCircle /> },
-  { href: "/support-circles", label: "Support Circles", icon: <Users /> },
-  { href: "/your-story", label: "Your Story", icon: <BookOpenText /> },
-  { href: "/upcoming-events", label: "Upcoming Events", icon: <CalendarDays /> },
+  { href: "/", label: "Home", icon: <LayoutDashboard className="size-6"/> },
+  { href: "/ask-a-mentor", label: "Ask a Mentor", icon: <HelpCircle className="size-6"/> },
+  { href: "/support-circles", label: "Support Circles", icon: <Users className="size-6"/> },
+  { href: "/your-story", label: "Your Story", icon: <BookOpenText className="size-6"/> },
+  { href: "/upcoming-events", label: "Upcoming Events", icon: <CalendarDays className="size-6"/> },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <div className="flex items-center gap-2 p-2">
-            <div className="bg-primary p-2 rounded-lg">
-              <svg
-                className="size-6 text-primary-foreground"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            </div>
-            <h2 className="text-xl font-headline font-bold text-primary group-data-[collapsible=icon]:hidden">
-              Lisebanzi
-            </h2>
-          </div>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            {navItems.map((item) => (
-              <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathname === item.href}
-                  tooltip={item.label}
-                >
-                  <Link href={item.href}>
-                    {item.icon}
-                    <span>{item.label}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarContent>
-      </Sidebar>
-      <SidebarInset>
-        <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:h-16 sm:px-6">
-          <SidebarTrigger className="md:hidden" />
-          <h1 className="text-lg font-semibold md:text-xl font-headline">
-            {navItems.find(item => item.href === pathname)?.label ?? 'Home'}
-          </h1>
-        </header>
-        <main className="flex-1 p-4 sm:p-6 overflow-auto">
-          {children}
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+    <div className="flex flex-col min-h-svh">
+      <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:h-16 sm:px-6">
+        <h1 className="text-lg font-semibold md:text-xl font-headline">
+          {navItems.find(item => item.href === pathname)?.label ?? 'Home'}
+        </h1>
+      </header>
+      <main className="flex-1 p-4 sm:p-6 overflow-auto pb-24 md:pb-28">
+        {children}
+      </main>
+
+      {/* Bottom Navigation Bar */}
+      <nav className="fixed bottom-0 left-0 right-0 h-16 md:h-20 bg-background/80 backdrop-blur-sm border-t border-border z-20 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+        <div className="container mx-auto h-full flex justify-around items-center">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex flex-col items-center justify-center gap-1 w-full h-full text-sm font-medium transition-colors",
+                pathname === item.href
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-primary"
+              )}
+            >
+              {item.icon}
+              <span className="text-xs md:text-sm">{item.label}</span>
+            </Link>
+          ))}
+        </div>
+      </nav>
+    </div>
   );
 }
