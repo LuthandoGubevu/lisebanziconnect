@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseInstances } from "@/lib/firebase";
 import { revalidatePath } from "next/cache";
 
 const StorySchema = z.object({
@@ -15,6 +15,7 @@ const StorySchema = z.object({
 });
 
 export async function shareStory(values: z.infer<typeof StorySchema>) {
+  const { db } = getFirebaseInstances();
   const validatedFields = StorySchema.safeParse(values);
 
   if (!validatedFields.success) {

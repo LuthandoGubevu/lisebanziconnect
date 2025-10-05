@@ -1,11 +1,12 @@
 "use server";
 
 import { addDoc, collection, Timestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseInstances } from "@/lib/firebase";
 import { revalidatePath } from "next/cache";
 
 // This action is for seeding data. In a real app, you'd have a proper form and validation.
 export async function addEvent() {
+    const { db } = getFirebaseInstances();
   try {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + 14); // 2 weeks from now

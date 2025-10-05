@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseInstances } from "@/lib/firebase";
 import { revalidatePath } from "next/cache";
 
 const QuestionSchema = z.object({
@@ -14,6 +14,7 @@ const QuestionSchema = z.object({
 });
 
 export async function askQuestion(values: z.infer<typeof QuestionSchema>) {
+  const { db } = getFirebaseInstances();
   const validatedFields = QuestionSchema.safeParse(values);
 
   if (!validatedFields.success) {

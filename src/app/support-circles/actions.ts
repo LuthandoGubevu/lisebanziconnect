@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseInstances } from "@/lib/firebase";
 
 const MessageSchema = z.object({
   text: z.string().min(1, "Message cannot be empty.").max(500, "Message is too long."),
@@ -10,6 +10,7 @@ const MessageSchema = z.object({
 });
 
 export async function sendMessage(values: z.infer<typeof MessageSchema>) {
+  const { db } = getFirebaseInstances();
   const validatedFields = MessageSchema.safeParse(values);
 
   if (!validatedFields.success) {
