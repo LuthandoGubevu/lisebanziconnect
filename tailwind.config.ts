@@ -10,9 +10,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['"PT Sans"', 'sans-serif'],
-        headline: ['"PT Sans"', 'sans-serif'],
-        code: ['monospace'],
+        sans: ['var(--font-inter)', 'sans-serif'],
       },
       colors: {
         background: 'hsl(var(--background))',
@@ -55,28 +53,16 @@ export default {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
-        sidebar: {
-          DEFAULT: 'hsl(var(--sidebar-background))',
-          foreground: 'hsl(var(--sidebar-foreground))',
-          primary: 'hsl(var(--sidebar-primary))',
-          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-          accent: 'hsl(var(--sidebar-accent))',
-          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-          border: 'hsl(var(--sidebar-border))',
-          ring: 'hsl(var(--sidebar-ring))',
-        },
       },
       borderRadius: {
         lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        md: 'calc(var(--radius) - 4px)',
+        sm: 'calc(var(--radius) - 8px)',
       },
       boxShadow: {
-        'neumorphic-sm': '4px 4px 8px hsl(var(--shadow-dark)), -4px -4px 8px hsl(var(--shadow-light))',
         'neumorphic': '8px 8px 16px hsl(var(--shadow-dark)), -8px -8px 16px hsl(var(--shadow-light))',
-        'neumorphic-inset': 'inset 8px 8px 16px hsl(var(--shadow-dark)), inset -8px -8px 16px hsl(var(--shadow-light))',
-        'glowing-sm': '0 0 8px hsl(var(--accent) / 0.5), 0 0 4px hsl(var(--accent) / 0.7)',
-        'glowing': '0 0 15px hsl(var(--accent) / 0.5), 0 0 5px hsl(var(--accent) / 0.7)',
+        'neumorphic-inset': 'inset 4px 4px 8px hsl(var(--shadow-dark)), inset -4px -4px 8px hsl(var(--shadow-light))',
+        'glowing': '0 0 20px hsl(var(--accent) / 0.6), 0 0 8px hsl(var(--primary) / 0.8)',
       },
       keyframes: {
         'accordion-down': {
@@ -95,19 +81,10 @@ export default {
             height: '0',
           },
         },
-        'aurora-bg': {
-          from: {
-            'background-position': '0% 50%',
-          },
-          to: {
-            'background-position': '100% 50%',
-          },
-        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'aurora-bg': 'aurora-bg 20s ease-in-out infinite alternate',
       },
     },
   },

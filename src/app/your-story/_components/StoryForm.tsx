@@ -65,9 +65,9 @@ export function StoryForm() {
   }
 
   return (
-    <Card className="shadow-neumorphic sticky top-20 bg-background/70 backdrop-blur-sm border-white/20">
+    <Card className="shadow-neumorphic sticky top-20 bg-white/30 backdrop-blur-lg border-white/20">
       <CardHeader>
-        <CardTitle className="font-headline">Share Your Story</CardTitle>
+        <CardTitle>Share Your Story</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -79,7 +79,7 @@ export function StoryForm() {
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="A title for your story" {...field} className="bg-background shadow-neumorphic-inset" />
+                    <Input placeholder="A title for your story" {...field} className="bg-white/50 backdrop-blur-sm border-white/20 shadow-neumorphic-inset" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -92,7 +92,7 @@ export function StoryForm() {
                 <FormItem>
                   <FormLabel>Your Name (Optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Anonymous" {...field} className="bg-background shadow-neumorphic-inset" />
+                    <Input placeholder="Anonymous" {...field} className="bg-white/50 backdrop-blur-sm border-white/20 shadow-neumorphic-inset" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -109,15 +109,15 @@ export function StoryForm() {
                       placeholder="Write your inspirational story here..."
                       rows={8}
                       {...field}
-                      className="bg-background shadow-neumorphic-inset"
+                      className="bg-white/50 backdrop-blur-sm border-white/20 shadow-neumorphic-inset"
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isSubmitting} className="w-full shadow-glowing-sm">
-              <PenSquare className="mr-2" />
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              <PenSquare className="mr-2 h-4 w-4" />
               {isSubmitting ? "Publishing..." : "Publish Story"}
             </Button>
           </form>

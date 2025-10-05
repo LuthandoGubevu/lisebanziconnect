@@ -63,9 +63,9 @@ export function QuestionForm() {
   }
 
   return (
-    <Card className="shadow-neumorphic sticky top-20 bg-background/70 backdrop-blur-sm border-white/20">
+    <Card className="shadow-neumorphic sticky top-20 bg-white/30 backdrop-blur-lg border border-white/20">
       <CardHeader>
-        <CardTitle className="font-headline">Submit your question</CardTitle>
+        <CardTitle>Submit your question</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -80,7 +80,7 @@ export function QuestionForm() {
                     <Input
                       placeholder="Anonymous"
                       {...field}
-                      className="bg-background shadow-neumorphic-inset"
+                      className="bg-white/50 backdrop-blur-sm border-white/20 shadow-neumorphic-inset"
                     />
                   </FormControl>
                   <FormMessage />
@@ -98,15 +98,15 @@ export function QuestionForm() {
                       placeholder="What would you like to ask?"
                       rows={5}
                       {...field}
-                      className="bg-background shadow-neumorphic-inset"
+                      className="bg-white/50 backdrop-blur-sm border-white/20 shadow-neumorphic-inset"
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isSubmitting} className="w-full shadow-glowing-sm">
-              <Send className="mr-2" />
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              <Send className="mr-2 h-4 w-4" />
               {isSubmitting ? "Submitting..." : "Submit Question"}
             </Button>
           </form>

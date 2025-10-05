@@ -2,93 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer base {
   :root {
-    --background: 180 75% 95%; /* light teal #E0F8F8 */
-    --foreground: 180 25% 25%; /* dark teal */
-    
-    --card: 180 75% 95%;
-    --card-foreground: 180 25% 25%;
+    --background: 210 20% 97%; /* #F5F7FA */
+    --foreground: 215 30% 25%;
 
-    --popover: 180 75% 92%;
-    --popover-foreground: 180 25% 25%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 30% 25%;
 
-    --primary: 180 100% 25%; /* teal #008080 */
-    --primary-foreground: 180 75% 95%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 30% 25%;
 
-    --secondary: 180 25% 85%;
-    --secondary-foreground: 180 100% 25%;
+    --primary: 215 100% 50%; /* #0072FF royal blue */
+    --primary-foreground: 0 0% 100%;
 
-    --muted: 180 25% 90%;
-    --muted-foreground: 180 25% 45%;
+    --secondary: 210 20% 90%;
+    --secondary-foreground: 215 100% 50%;
 
-    --accent: 208 45% 52%; /* blue #4682B4 */
+    --muted: 210 20% 94%;
+    --muted-foreground: 215 25% 45%;
+
+    --accent: 195 100% 50%; /* #00C6FF sky blue */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 180 25% 88%;
-    --input: 180 25% 92%;
-    --ring: 208 45% 52%;
+    --border: 0 0% 100% / 0.2;
+    --input: 0 0% 100% / 0.1;
+    --ring: 195 100% 50%;
 
-    --radius: 0.8rem;
+    --radius: 1rem;
 
-    --shadow-dark: 180 25% 88%;
+    --shadow-dark: 210 20% 88%;
     --shadow-light: 0 0% 100%;
-
-    /* Sidebar colors */
-    --sidebar-background: 180 50% 98%;
-    --sidebar-foreground: 180 25% 25%;
-    --sidebar-border: 180 25% 90%;
-    --sidebar-accent: 180 75% 92%;
-    --sidebar-accent-foreground: 180 100% 25%;
-    --sidebar-ring: 208 45% 52%;
   }
 
   .dark {
     /* A possible dark theme, derived from the light theme */
-    --background: 200 20% 7%;
-    --foreground: 180 25% 95%;
+    --background: 215 30% 10%;
+    --foreground: 210 20% 95%;
 
-    --card: 200 20% 10%;
-    --card-foreground: 180 25% 95%;
+    --card: 215 30% 15%;
+    --card-foreground: 210 20% 95%;
 
-    --popover: 200 20% 7%;
-    --popover-foreground: 180 25% 95%;
+    --popover: 215 30% 10%;
+    --popover-foreground: 210 20% 95%;
 
-    --primary: 180 100% 35%;
-    --primary-foreground: 180 25% 95%;
+    --primary: 195 100% 50%;
+    --primary-foreground: 215 30% 10%;
 
-    --secondary: 200 20% 15%;
-    --secondary-foreground: 180 25% 95%;
+    --secondary: 215 30% 20%;
+    --secondary-foreground: 210 20% 95%;
 
-    --muted: 200 20% 15%;
-    --muted-foreground: 180 25% 65%;
+    --muted: 215 30% 20%;
+    --muted-foreground: 210 20% 65%;
 
-    --accent: 208 55% 62%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 165 100% 44%;
+    --accent-foreground: 215 30% 10%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 200 20% 15%;
-    --input: 200 20% 15%;
-    --ring: 208 55% 62%;
+    --border: 0 0% 100% / 0.1;
+    --input: 0 0% 100% / 0.05;
+    --ring: 195 100% 50%;
     
-    --shadow-dark: 200 20% 5%;
-    --shadow-light: 200 20% 15%;
-
-    --sidebar-background: 200 20% 10%;
-    --sidebar-foreground: 180 25% 95%;
-    --sidebar-border: 200 20% 15%;
-    --sidebar-accent: 200 20% 15%;
-    --sidebar-accent-foreground: 180 100% 35%;
-    --sidebar-ring: 208 55% 62%;
+    --shadow-dark: 215 30% 5%;
+    --shadow-light: 215 20% 20%;
   }
 }
 
@@ -98,8 +79,17 @@ body {
   }
   body {
     @apply bg-background text-foreground;
-    background-image: linear-gradient(120deg, hsl(180 75% 95%), hsl(195 75% 95%), hsl(220 75% 95%));
-    background-size: 200% 200%;
-    animation: aurora-bg 20s ease-in-out infinite alternate;
+  }
+}
+
+@layer components {
+  .shadow-neumorphic {
+    box-shadow: 8px 8px 16px hsl(var(--shadow-dark)), -8px -8px 16px hsl(var(--shadow-light));
+  }
+  .shadow-neumorphic-inset {
+    box-shadow: inset 4px 4px 8px hsl(var(--shadow-dark)), inset -4px -4px 8px hsl(var(--shadow-light));
+  }
+  .shadow-glowing {
+     box-shadow: 0 0 20px hsl(var(--accent) / 0.6), 0 0 8px hsl(var(--primary) / 0.8);
   }
 }

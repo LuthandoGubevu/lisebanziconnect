@@ -45,7 +45,7 @@ export function QuestionList() {
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className="h-20 w-full rounded-lg" />
+          <Skeleton key={i} className="h-24 w-full rounded-lg bg-white/30" />
         ))}
       </div>
     );
@@ -53,7 +53,7 @@ export function QuestionList() {
 
   if (questions.length === 0) {
     return (
-        <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-64">
+        <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-64 border-white/50">
             <h3 className="text-xl font-semibold text-muted-foreground">No questions yet</h3>
             <p className="text-muted-foreground">Be the first one to ask a question!</p>
         </div>
@@ -64,15 +64,15 @@ export function QuestionList() {
     <Accordion type="single" collapsible className="w-full space-y-4">
       {questions.map((q) => (
         <AccordionItem key={q.id} value={q.id} className="border-none">
-          <div className="bg-background/70 backdrop-blur-sm border border-white/20 rounded-lg shadow-neumorphic">
+          <div className="bg-white/30 backdrop-blur-lg border border-white/20 rounded-lg shadow-neumorphic">
             <AccordionTrigger className="p-4 text-left hover:no-underline">
               <div className="flex-1">
-                <p className="font-semibold text-base text-primary">{q.question}</p>
+                <p className="font-semibold text-base text-primary-dark">{q.question}</p>
                 <p className="text-sm text-muted-foreground mt-1">Asked by {q.name} on {formatTimestamp(q.createdAt)}</p>
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-4 pb-4">
-              <div className="border-t pt-4">
+              <div className="border-t pt-4 border-white/20">
                 {q.answer ? (
                   <div className="flex gap-3">
                     <div className="flex-shrink-0 bg-primary/10 p-2 rounded-full h-fit"><Bot className="text-primary"/></div>

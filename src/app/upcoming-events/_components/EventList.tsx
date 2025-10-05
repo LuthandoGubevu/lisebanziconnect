@@ -72,7 +72,7 @@ export function EventList() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className="h-48 w-full rounded-lg" />
+          <Skeleton key={i} className="h-48 w-full rounded-lg bg-white/30" />
         ))}
       </div>
     );
@@ -80,7 +80,7 @@ export function EventList() {
 
   if (events.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-64">
+      <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-64 border-white/50">
         <h3 className="text-xl font-semibold text-muted-foreground">
           No Upcoming Events
         </h3>
@@ -94,11 +94,11 @@ export function EventList() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {events.map((event) => (
-        <Card key={event.id} className="shadow-neumorphic flex flex-col bg-background/70 backdrop-blur-sm border-white/20">
+        <Card key={event.id} className="shadow-neumorphic flex flex-col bg-white/30 backdrop-blur-lg border-white/20">
           <CardHeader>
-            <CardTitle className="font-headline text-primary">{event.title}</CardTitle>
+            <CardTitle className="bg-gradient-to-br from-accent to-primary bg-clip-text text-transparent">{event.title}</CardTitle>
             <CardDescription className="flex items-center gap-2 pt-1">
-              <Calendar className="size-4" />
+              <Calendar className="size-4 text-muted-foreground" />
               <span>{formatTimestamp(event.date)}</span>
             </CardDescription>
           </CardHeader>
