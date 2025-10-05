@@ -77,13 +77,13 @@ export function ChatRoom() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-white/20 backdrop-blur-lg border border-white/20 rounded-2xl shadow-neumorphic">
+    <div className="flex flex-col h-full bg-card backdrop-blur-lg border border-white/20 rounded-2xl shadow-neumorphic">
       <div className="flex-1 p-4 md:p-6 space-y-4 overflow-y-auto">
         {loading ? (
           <div className="space-y-4">
-              <Skeleton className="h-16 w-3/4 bg-white/30" />
-              <Skeleton className="h-16 w-3/4 ml-auto bg-white/30" />
-              <Skeleton className="h-16 w-3/4 bg-white/30" />
+              <Skeleton className="h-16 w-3/4 bg-card/80" />
+              <Skeleton className="h-16 w-3/4 ml-auto bg-card/80" />
+              <Skeleton className="h-16 w-3/4 bg-card/80" />
           </div>
         ) : messages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-muted-foreground">
@@ -96,7 +96,7 @@ export function ChatRoom() {
         )}
         <div ref={messagesEndRef} />
       </div>
-      <div className="p-4 border-t border-white/20 bg-white/30 backdrop-blur-sm rounded-b-2xl">
+      <div className="p-4 border-t border-white/20 bg-card/80 backdrop-blur-sm rounded-b-2xl">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-4">
             <div className="flex-1 grid gap-4">
@@ -109,7 +109,7 @@ export function ChatRoom() {
                       <Input
                         autoComplete="off"
                         placeholder="Type your message..."
-                        className="bg-white/50 backdrop-blur-sm border-white/20 shadow-neumorphic-inset"
+                        className="bg-input backdrop-blur-sm border-white/20 shadow-neumorphic-inset"
                         {...field}
                       />
                     </FormControl>
@@ -125,7 +125,7 @@ export function ChatRoom() {
                         <Input
                           autoComplete="off"
                           placeholder="Your Name (Optional)"
-                           className="bg-white/50 backdrop-blur-sm border-white/20 shadow-neumorphic-inset text-sm"
+                           className="bg-input backdrop-blur-sm border-white/20 shadow-neumorphic-inset text-sm"
                           {...field}
                         />
                       </FormControl>

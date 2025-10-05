@@ -30,7 +30,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 h-16 bg-white/30 backdrop-blur-xl border-t border-white/20 z-20">
+      <nav className="fixed bottom-0 left-0 right-0 h-16 bg-background/70 backdrop-blur-xl border-t border-white/20 z-20">
         <div className="container mx-auto h-full grid grid-cols-5 items-center">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -40,20 +40,20 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 href={item.href}
                 className={cn(
                   "flex flex-col items-center justify-center gap-1 text-sm font-medium transition-all duration-300 relative h-full",
-                  isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
+                  isActive ? "text-accent" : "text-muted-foreground hover:text-primary"
                 )}
               >
                 <div className={cn(
-                  "absolute top-0 h-1 w-10 rounded-b-full bg-primary transition-all duration-300",
-                  isActive ? "opacity-100 scale-100" : "opacity-0 scale-0"
+                  "absolute top-0 h-1 w-10 rounded-b-full bg-accent transition-all duration-300",
+                  isActive ? "opacity-100 scale-100 shadow-glowing" : "opacity-0 scale-0"
                 )}></div>
                 <div className={cn(
                   "p-2 rounded-full transition-all duration-300",
-                  isActive ? "bg-primary/10 shadow-glowing" : "bg-transparent"
+                   isActive ? "bg-accent/10" : "bg-transparent"
                 )}>
                   {item.icon}
                 </div>
-                <span className="text-xs">{item.label}</span>
+                <span className={cn("text-xs", isActive ? "font-bold" : "font-medium")}>{item.label}</span>
               </Link>
             )
           })}

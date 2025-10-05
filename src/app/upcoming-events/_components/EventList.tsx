@@ -72,7 +72,7 @@ export function EventList() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className="h-48 w-full rounded-lg bg-white/30" />
+          <Skeleton key={i} className="h-48 w-full rounded-lg bg-card/80" />
         ))}
       </div>
     );
@@ -94,9 +94,9 @@ export function EventList() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {events.map((event) => (
-        <Card key={event.id} className="shadow-neumorphic flex flex-col bg-white/30 backdrop-blur-lg border-white/20">
+        <Card key={event.id} className="shadow-neumorphic flex flex-col bg-card backdrop-blur-lg border-white/20">
           <CardHeader>
-            <CardTitle className="bg-gradient-to-br from-accent to-primary bg-clip-text text-transparent">{event.title}</CardTitle>
+            <CardTitle className="bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">{event.title}</CardTitle>
             <CardDescription className="flex items-center gap-2 pt-1">
               <Calendar className="size-4 text-muted-foreground" />
               <span>{formatTimestamp(event.date)}</span>

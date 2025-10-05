@@ -33,14 +33,14 @@ const features = [
   },
 ]
 
-export default function Home() {
+export default function HomePage() {
   const heroImage = PlaceHolderImages.find(p => p.id === 'hero-home');
   return (
     <div className="flex flex-col gap-12 md:gap-16 pb-12">
       <section className="relative w-full -mt-6">
         <div className="container mx-auto grid lg:grid-cols-2 gap-8 items-center py-12 md:py-24">
           <div className="flex flex-col gap-4 text-center lg:text-left">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-br from-accent to-primary bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent" style={{textShadow: '0 0 6px hsla(var(--accent)/0.3)'}}>
               Welcome to LisebanziConnect
             </h1>
             <p className="text-lg md:text-xl text-foreground/80">
@@ -76,16 +76,16 @@ export default function Home() {
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature) => (
-            <Card key={feature.title} className="shadow-neumorphic transition-transform hover:-translate-y-2 duration-300 ease-in-out bg-white/30 backdrop-blur-sm border-white/20">
+            <Card key={feature.title} className="shadow-neumorphic transition-transform hover:-translate-y-2 duration-300 ease-in-out bg-card backdrop-blur-md border-white/20">
               <CardHeader className="items-center">
-                <div className="p-4 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full mb-2 shadow-inner">
+                <div className="p-4 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full mb-2 shadow-inner">
                   {feature.icon}
                 </div>
                 <CardTitle className="text-center">{feature.title}</CardTitle>
               </CardHeader>
               <CardContent className="text-center text-foreground/70">
                 <p>{feature.description}</p>
-                <Button asChild variant="link" className="mt-4 text-primary font-semibold">
+                <Button asChild variant="link" className="mt-4 text-accent font-semibold">
                   <Link href={feature.href}>Learn More <ArrowRight className="size-4 ml-1" /></Link>
                 </Button>
               </CardContent>

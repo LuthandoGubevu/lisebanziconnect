@@ -58,7 +58,7 @@ export function StoryList() {
     return (
       <div className="space-y-6">
         {[...Array(2)].map((_, i) => (
-          <Skeleton key={i} className="h-48 w-full rounded-lg bg-white/30" />
+          <Skeleton key={i} className="h-48 w-full rounded-lg bg-card/80" />
         ))}
       </div>
     );
@@ -80,9 +80,9 @@ export function StoryList() {
   return (
     <div className="space-y-6">
       {stories.map((story) => (
-        <Card key={story.id} className="shadow-neumorphic bg-white/30 backdrop-blur-lg border-white/20">
+        <Card key={story.id} className="shadow-neumorphic bg-card backdrop-blur-lg border-white/20">
           <CardHeader>
-            <CardTitle className="bg-gradient-to-br from-accent to-primary bg-clip-text text-transparent">{story.title}</CardTitle>
+            <CardTitle className="bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">{story.title}</CardTitle>
             <CardDescription>
               By {story.author} on {formatTimestamp(story.createdAt)}
             </CardDescription>

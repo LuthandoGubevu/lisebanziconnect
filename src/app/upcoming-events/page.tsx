@@ -23,9 +23,9 @@ export default function UpcomingEventsPage() {
         description="Join our community events to learn, connect, and grow together."
       />
 
-      <Alert className="shadow-neumorphic-sm bg-white/20 backdrop-blur-sm border-white/20 text-foreground">
+      <Alert className="shadow-sm bg-card/80 backdrop-blur-sm border-white/20 text-foreground">
         <Info className="h-4 w-4 text-accent" />
-        <AlertTitle className="font-bold text-primary">Admin Notice</AlertTitle>
+        <AlertTitle className="font-bold text-accent">Admin Notice</AlertTitle>
         <AlertDescription>
          Currently, there is no UI to add new events. You can programmatically add events to the 'events' collection in Firestore.
         </AlertDescription>
@@ -33,7 +33,7 @@ export default function UpcomingEventsPage() {
       
       <SeedEventsButton />
 
-      <Suspense fallback={<Skeleton className="h-[400px] w-full bg-white/30" />}>
+      <Suspense fallback={<Skeleton className="h-[400px] w-full bg-card/80" />}>
         <EventList />
       </Suspense>
     </div>

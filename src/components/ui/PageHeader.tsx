@@ -9,7 +9,7 @@ type PageHeaderProps = {
 export function PageHeader({ title, description, className }: PageHeaderProps) {
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-br from-accent to-primary bg-clip-text text-transparent">
+      <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent" style={{textShadow: '0 0 6px hsla(var(--accent)/0.3)'}}>
         {title}
       </h2>
       {description && (

@@ -65,7 +65,7 @@ export function StoryForm() {
   }
 
   return (
-    <Card className="shadow-neumorphic sticky top-20 bg-white/30 backdrop-blur-lg border-white/20">
+    <Card className="shadow-neumorphic sticky top-20 bg-card backdrop-blur-lg border-white/20">
       <CardHeader>
         <CardTitle>Share Your Story</CardTitle>
       </CardHeader>
@@ -79,7 +79,7 @@ export function StoryForm() {
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="A title for your story" {...field} className="bg-white/50 backdrop-blur-sm border-white/20 shadow-neumorphic-inset" />
+                    <Input placeholder="A title for your story" {...field} className="bg-input backdrop-blur-sm border-white/20 shadow-neumorphic-inset" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -92,7 +92,7 @@ export function StoryForm() {
                 <FormItem>
                   <FormLabel>Your Name (Optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Anonymous" {...field} className="bg-white/50 backdrop-blur-sm border-white/20 shadow-neumorphic-inset" />
+                    <Input placeholder="Anonymous" {...field} className="bg-input backdrop-blur-sm border-white/20 shadow-neumorphic-inset" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -109,7 +109,7 @@ export function StoryForm() {
                       placeholder="Write your inspirational story here..."
                       rows={8}
                       {...field}
-                      className="bg-white/50 backdrop-blur-sm border-white/20 shadow-neumorphic-inset"
+                      className="bg-input backdrop-blur-sm border-white/20 shadow-neumorphic-inset"
                     />
                   </FormControl>
                   <FormMessage />

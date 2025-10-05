@@ -45,7 +45,7 @@ export function QuestionList() {
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className="h-24 w-full rounded-lg bg-white/30" />
+          <Skeleton key={i} className="h-24 w-full rounded-lg bg-card/80" />
         ))}
       </div>
     );
@@ -64,7 +64,7 @@ export function QuestionList() {
     <Accordion type="single" collapsible className="w-full space-y-4">
       {questions.map((q) => (
         <AccordionItem key={q.id} value={q.id} className="border-none">
-          <div className="bg-white/30 backdrop-blur-lg border border-white/20 rounded-lg shadow-neumorphic">
+          <div className="bg-card backdrop-blur-lg border border-white/20 rounded-lg shadow-neumorphic">
             <AccordionTrigger className="p-4 text-left hover:no-underline">
               <div className="flex-1">
                 <p className="font-semibold text-base text-primary-dark">{q.question}</p>
