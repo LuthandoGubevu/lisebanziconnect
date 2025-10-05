@@ -1,0 +1,117 @@
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { askQuestion } from "../actions";
+import { Send } from "lucide-react";
+import React from "react";
+
+const questionSchema = z.object({
+  name: z.string().optional(),
+  question: z
+    .string()
+    .min(10, "Question must be at least 10 characters long.")
+    .max(1000, "Question must be less than 1000 characters."),
+});
+
+type QuestionFormValues = z.infer<typeof questionSchema>;
+
+export function QuestionForm() {
+  const { toast } = useToast();
+  const form = useForm<QuestionFormValues>({
+    resolver: zodResolver(questionSchema),
+    defaultValues: {
+      name: "",
+      question: "",
+    },
+  });
+
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  async function onSubmit(values: QuestionFormValues) {
+    setIsSubmitting(true);
+    const result = await askQuestion(values);
+
+    if (result.success) {
+      toast({
+        title: "Success!",
+        description: "Your question has been submitted.",
+      });
+      form.reset();
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: result.error || "There was a problem with your request.",
+      });
+    }
+    setIsSubmitting(false);
+  }
+
+  return (
+    <Card className="shadow-neumorphic sticky top-20 bg-background/70 backdrop-blur-sm border-white/20">
+      <CardHeader>
+        <CardTitle className="font-headline">Submit your question</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Your Name (Optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Anonymous"
+                      {...field}
+                      className="bg-background shadow-neumorphic-inset"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="question"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Your Question</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="What would you like to ask?"
+                      rows={5}
+                      {...field}
+                      className="bg-background shadow-neumorphic-inset"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" disabled={isSubmitting} className="w-full shadow-glowing-sm">
+              <Send className="mr-2" />
+              {isSubmitting ? "Submitting..." : "Submit Question"}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+}
