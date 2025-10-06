@@ -1,7 +1,7 @@
-
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { SignInForm } from "@/components/auth/SignInForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +13,15 @@ export default function AuthPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white p-4">
       <Card className="w-full max-w-md shadow-lg bg-white/80 backdrop-blur-lg border-gray-200">
+        <div className="flex justify-center pt-6">
+          <Image
+            src="/Lisebanzi Foundation .jpg"
+            alt="Lisebanzi Foundation Logo"
+            width={100}
+            height={100}
+            className="rounded-full"
+          />
+        </div>
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">
             {isSigningUp ? "Create an Account" : "Welcome Back"}
