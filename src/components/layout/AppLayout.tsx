@@ -1,3 +1,4 @@
+
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -5,16 +6,17 @@ import {
   BookOpenText,
   CalendarDays,
   HelpCircle,
-  Home,
+  LayoutDashboard,
   Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { Header } from "./Header";
+import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
-  { href: "/", label: "Home", icon: <Home className="size-5" /> },
+  { href: "/dashboard", label: "Dashboard", icon: <LayoutDashboard className="size-5" /> },
   { href: "/ask-a-mentor", label: "Ask a Mentor", icon: <HelpCircle className="size-5" /> },
   { href: "/support-circles", label: "Support Circles", icon: <Users className="size-5" /> },
   { href: "/your-story", label: "Your Story", icon: <BookOpenText className="size-5" /> },
@@ -23,6 +25,11 @@ const navItems = [
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { user } = useAuth();
+
+  if (!user) {
+    return null; // Or a loading spinner
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
