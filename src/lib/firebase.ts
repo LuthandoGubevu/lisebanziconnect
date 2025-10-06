@@ -22,7 +22,5 @@ function getFirebaseInstances() {
     return { app, db };
 }
 
-const { db } = getFirebaseInstances();
-
-
-export { db, getFirebaseInstances };
+// Export the function to be called where needed, not the instance.
+export { getFirebaseInstances };

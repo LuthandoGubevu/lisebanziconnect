@@ -11,7 +11,7 @@ import {
   onSnapshot,
   limit,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseInstances } from "@/lib/firebase";
 import type { Message } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,7 @@ export function ChatRoom() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { db } = getFirebaseInstances();
   
   const form = useForm<MessageFormValues>({
     resolver: zodResolver(messageSchema),
@@ -57,7 +58,7 @@ export function ChatRoom() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [db]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

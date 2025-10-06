@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseInstances } from "@/lib/firebase";
 import type { Question } from "@/lib/types";
 import {
   Accordion,
@@ -23,6 +23,8 @@ function formatTimestamp(timestamp: Timestamp | null) {
 export function QuestionList() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
+  const { db } = getFirebaseInstances();
+
 
   useEffect(() => {
     const q = query(collection(db, "questions"), orderBy("createdAt", "desc"));
@@ -39,7 +41,7 @@ export function QuestionList() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [db]);
 
   if (loading) {
     return (

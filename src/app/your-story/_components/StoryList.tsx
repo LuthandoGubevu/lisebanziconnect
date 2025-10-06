@@ -8,7 +8,7 @@ import {
   onSnapshot,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseInstances } from "@/lib/firebase";
 import type { Story } from "@/lib/types";
 import {
   Card,
@@ -32,6 +32,8 @@ function formatTimestamp(timestamp: Timestamp | null) {
 export function StoryList() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
+  const { db } = getFirebaseInstances();
+
 
   useEffect(() => {
     const q = query(collection(db, "stories"), orderBy("createdAt", "desc"));
@@ -52,7 +54,7 @@ export function StoryList() {
     );
 
     return () => unsubscribe();
-  }, []);
+  }, [db]);
 
   if (loading) {
     return (

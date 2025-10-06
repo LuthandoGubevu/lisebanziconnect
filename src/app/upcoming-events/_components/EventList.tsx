@@ -8,7 +8,7 @@ import {
   onSnapshot,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseInstances } from "@/lib/firebase";
 import type { Event } from "@/lib/types";
 import {
   Card,
@@ -33,6 +33,8 @@ function formatTimestamp(timestamp: Timestamp | null) {
 export function EventList() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const { db } = getFirebaseInstances();
+
 
   useEffect(() => {
     // Seed with one event if collection is empty
@@ -56,7 +58,7 @@ export function EventList() {
     );
 
     return () => unsubscribe();
-  }, []);
+  }, [db]);
 
   const addInitialEvent = async () => {
     const q = query(collection(db, "events"));
