@@ -2,6 +2,7 @@
 import { initializeApp, getApps, getApp, type FirebaseOptions } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { getAnalytics, isSupported } from 'firebase/analytics';
 
 // For debugging Firebase configuration issues, consider the following:
 // 1. Verify Environment Variables: Ensure that your .env.local file is correctly set up and that the variable names match what's used here.
@@ -24,6 +25,15 @@ function initializeFirebase() {
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
   const db = getFirestore(app);
   const auth = getAuth(app);
+
+  if (typeof window !== 'undefined') {
+    isSupported().then((supported) => {
+      if (supported) {
+        getAnalytics(app);
+      }
+    });
+  }
+  
   return { app, db, auth };
 }
 
