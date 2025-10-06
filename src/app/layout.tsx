@@ -42,7 +42,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} font-sans antialiased bg-gray-50 text-gray-900`}>
         <FirebaseClientProvider config={firebaseConfig}>
-            {children}
+          {children}
         </FirebaseClientProvider>
         <Toaster />
       </body>
