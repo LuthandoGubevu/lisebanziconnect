@@ -77,16 +77,16 @@ export function ChatRoom() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-card backdrop-blur-lg border border-white/20 rounded-2xl shadow-neumorphic">
+    <div className="flex flex-col h-full bg-white/80 backdrop-blur-lg border border-gray-200 rounded-2xl shadow-lg">
       <div className="flex-1 p-4 md:p-6 space-y-4 overflow-y-auto">
         {loading ? (
           <div className="space-y-4">
-              <Skeleton className="h-16 w-3/4 bg-card/80" />
-              <Skeleton className="h-16 w-3/4 ml-auto bg-card/80" />
-              <Skeleton className="h-16 w-3/4 bg-card/80" />
+              <Skeleton className="h-16 w-3/4 bg-gray-200/80" />
+              <Skeleton className="h-16 w-3/4 ml-auto bg-gray-200/80" />
+              <Skeleton className="h-16 w-3/4 bg-gray-200/80" />
           </div>
         ) : messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-muted-foreground">
+          <div className="flex items-center justify-center h-full text-gray-500">
             No messages yet. Start the conversation!
           </div>
         ) : (
@@ -96,7 +96,7 @@ export function ChatRoom() {
         )}
         <div ref={messagesEndRef} />
       </div>
-      <div className="p-4 border-t border-white/20 bg-card/80 backdrop-blur-sm rounded-b-2xl">
+      <div className="p-4 border-t border-gray-200 bg-white/80 backdrop-blur-sm rounded-b-2xl">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-4">
             <div className="flex-1 grid gap-4">
@@ -109,7 +109,7 @@ export function ChatRoom() {
                       <Input
                         autoComplete="off"
                         placeholder="Type your message..."
-                        className="bg-input backdrop-blur-sm border-white/20 shadow-neumorphic-inset"
+                        className="bg-white/80 backdrop-blur-sm border-gray-300 shadow-inner"
                         {...field}
                       />
                     </FormControl>
@@ -125,7 +125,7 @@ export function ChatRoom() {
                         <Input
                           autoComplete="off"
                           placeholder="Your Name (Optional)"
-                           className="bg-input backdrop-blur-sm border-white/20 shadow-neumorphic-inset text-sm"
+                           className="bg-white/80 backdrop-blur-sm border-gray-300 shadow-inner text-sm"
                           {...field}
                         />
                       </FormControl>

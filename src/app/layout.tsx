@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { Toaster } from "@/components/ui/toaster";
 import { AppLayout } from '@/components/layout/AppLayout';
 import './globals.css';
-import { PT_Sans } from 'next/font/google';
+import { Inter } from 'next/font/google';
 
-const ptSans = PT_Sans({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-pt-sans' });
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 
 export const metadata: Metadata = {
@@ -18,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${ptSans.variable} font-sans antialiased`}>
+    <html lang="en">
+      <body className={`${inter.variable} font-sans antialiased bg-white text-gray-900`}>
         <AppLayout>
           {children}
         </AppLayout>

@@ -58,7 +58,7 @@ export function StoryList() {
     return (
       <div className="space-y-6">
         {[...Array(2)].map((_, i) => (
-          <Skeleton key={i} className="h-48 w-full rounded-lg bg-card/80" />
+          <Skeleton key={i} className="h-48 w-full rounded-lg bg-gray-200/80" />
         ))}
       </div>
     );
@@ -66,11 +66,11 @@ export function StoryList() {
 
   if (stories.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-64 border-white/50">
-        <h3 className="text-xl font-semibold text-muted-foreground">
+      <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-64 border-gray-300">
+        <h3 className="text-xl font-semibold text-gray-500">
           No Stories Yet
         </h3>
-        <p className="text-muted-foreground">
+        <p className="text-gray-500">
           Be the first one to share an inspirational story!
         </p>
       </div>
@@ -80,15 +80,15 @@ export function StoryList() {
   return (
     <div className="space-y-6">
       {stories.map((story) => (
-        <Card key={story.id} className="shadow-neumorphic bg-card backdrop-blur-lg border-white/20">
+        <Card key={story.id} className="shadow-lg bg-white/80 backdrop-blur-lg border-gray-200">
           <CardHeader>
-            <CardTitle className="bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">{story.title}</CardTitle>
+            <CardTitle className="text-blue-600">{story.title}</CardTitle>
             <CardDescription>
               By {story.author} on {formatTimestamp(story.createdAt)}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="line-clamp-4 whitespace-pre-wrap text-foreground/80">
+            <p className="line-clamp-4 whitespace-pre-wrap text-gray-700">
               {story.story}
             </p>
           </CardContent>

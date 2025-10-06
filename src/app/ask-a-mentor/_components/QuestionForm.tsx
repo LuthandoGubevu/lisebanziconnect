@@ -63,7 +63,7 @@ export function QuestionForm() {
   }
 
   return (
-    <Card className="shadow-neumorphic sticky top-20 bg-card backdrop-blur-lg border-white/20">
+    <Card className="shadow-lg sticky top-20 bg-white/80 backdrop-blur-lg border-gray-200">
       <CardHeader>
         <CardTitle>Submit your question</CardTitle>
       </CardHeader>
@@ -80,7 +80,7 @@ export function QuestionForm() {
                     <Input
                       placeholder="Anonymous"
                       {...field}
-                      className="bg-input backdrop-blur-sm border-white/20 shadow-neumorphic-inset"
+                      className="bg-white/80 backdrop-blur-sm border-gray-300 shadow-inner"
                     />
                   </FormControl>
                   <FormMessage />
@@ -98,7 +98,7 @@ export function QuestionForm() {
                       placeholder="What would you like to ask?"
                       rows={5}
                       {...field}
-                      className="bg-input backdrop-blur-sm border-white/20 shadow-neumorphic-inset"
+                      className="bg-white/80 backdrop-blur-sm border-gray-300 shadow-inner"
                     />
                   </FormControl>
                   <FormMessage />

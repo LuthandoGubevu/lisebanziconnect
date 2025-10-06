@@ -72,7 +72,7 @@ export function EventList() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className="h-48 w-full rounded-lg bg-card/80" />
+          <Skeleton key={i} className="h-48 w-full rounded-lg bg-gray-200/80" />
         ))}
       </div>
     );
@@ -80,11 +80,11 @@ export function EventList() {
 
   if (events.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-64 border-white/50">
-        <h3 className="text-xl font-semibold text-muted-foreground">
+      <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-64 border-gray-300">
+        <h3 className="text-xl font-semibold text-gray-500">
           No Upcoming Events
         </h3>
-        <p className="text-muted-foreground">
+        <p className="text-gray-500">
           Check back soon for new events and workshops!
         </p>
       </div>
@@ -94,16 +94,16 @@ export function EventList() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {events.map((event) => (
-        <Card key={event.id} className="shadow-neumorphic flex flex-col bg-card backdrop-blur-lg border-white/20">
+        <Card key={event.id} className="shadow-lg flex flex-col bg-white/80 backdrop-blur-lg border-gray-200">
           <CardHeader>
-            <CardTitle className="bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">{event.title}</CardTitle>
+            <CardTitle className="text-blue-600">{event.title}</CardTitle>
             <CardDescription className="flex items-center gap-2 pt-1">
-              <Calendar className="size-4 text-muted-foreground" />
+              <Calendar className="size-4 text-gray-500" />
               <span>{formatTimestamp(event.date)}</span>
             </CardDescription>
           </CardHeader>
           <CardContent className="flex-1">
-            <p className="text-foreground/80">{event.description}</p>
+            <p className="text-gray-700">{event.description}</p>
           </CardContent>
         </Card>
       ))}
