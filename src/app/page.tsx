@@ -11,8 +11,16 @@ export default function AuthPage() {
   const [isSigningUp, setIsSigningUp] = useState(false);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-white p-4">
-      <Card className="w-full max-w-md shadow-lg bg-white/80 backdrop-blur-lg border-gray-200">
+    <div
+      className="flex min-h-screen flex-col items-center justify-center bg-cover bg-center p-4 transition-all duration-500"
+      style={{
+        backgroundImage: `url(${
+          isSigningUp ? "/men-session.jpg" : "/women-session.jpg"
+        })`,
+      }}
+    >
+      <div className="absolute inset-0 bg-black/30" />
+      <Card className="z-10 w-full max-w-md shadow-lg bg-white/60 backdrop-blur-lg border-gray-200/50">
         <div className="flex justify-center pt-6">
           <Image
             src="/Lisebanzi Foundation .jpg"
@@ -23,7 +31,7 @@ export default function AuthPage() {
           />
         </div>
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">
+          <CardTitle className="text-2xl font-bold text-gray-800">
             {isSigningUp ? "Create an Account" : "Welcome Back"}
           </CardTitle>
         </CardHeader>
@@ -35,7 +43,7 @@ export default function AuthPage() {
                 Already have an account?{" "}
                 <Button
                   variant="link"
-                  className="p-0 h-auto"
+                  className="p-0 h-auto font-bold"
                   onClick={() => setIsSigningUp(false)}
                 >
                   Sign In
@@ -46,7 +54,7 @@ export default function AuthPage() {
                 Don&apos;t have an account?{" "}
                 <Button
                   variant="link"
-                  className="p-0 h-auto"
+                  className="p-0 h-auto font-bold"
                   onClick={() => setIsSigningUp(true)}
                 >
                   Sign Up
