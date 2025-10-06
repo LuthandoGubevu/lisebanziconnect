@@ -1,4 +1,3 @@
-"use client";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp, type FirebaseOptions } from "firebase/app";
@@ -23,7 +22,6 @@ function getFirebaseInstances() {
     return { app, db };
 }
 
-// We initialize here to be used in client components
 const { db } = getFirebaseInstances();
 
 
