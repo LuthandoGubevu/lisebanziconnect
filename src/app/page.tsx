@@ -12,7 +12,7 @@ export default function AuthPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-purple-400 to-[#682d91] p-4">
-      <Card className="z-10 w-full max-w-md shadow-lg">
+      <Card className="z-10 w-full max-w-md shadow-lg bg-white">
         <div className="flex justify-center pt-6">
           <Image
             src="/Lisebanzi Foundation .jpg"
