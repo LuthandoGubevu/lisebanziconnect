@@ -9,7 +9,7 @@ export function Header() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/logo.svg"
+            src="/logo-logo.png"
             alt="Lisebanzi Connect Logo"
             width={160}
             height={40}
