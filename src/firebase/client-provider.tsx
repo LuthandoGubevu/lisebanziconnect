@@ -5,17 +5,22 @@ import React, { useMemo } from 'react';
 import { initializeFirebase } from './index';
 import { FirebaseProvider } from './provider';
 import { AuthLayout } from '@/components/layout/AuthLayout';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function FirebaseClientProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Use useMemo to ensure Firebase is initialized only once per render cycle on the client.
+  // useMemo ensures this only runs once on the client, and `initializeFirebase` now has guards.
   const firebaseInstances = useMemo(() => initializeFirebase(), []);
 
   if (!firebaseInstances) {
-    return <div>Loading...</div>; // Or a proper loading skeleton
+    return (
+       <div className="flex items-center justify-center h-screen">
+        <Skeleton className="h-20 w-20 rounded-full" />
+      </div>
+    );
   }
   
   const { app, auth, db } = firebaseInstances;

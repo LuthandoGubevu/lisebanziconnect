@@ -15,17 +15,19 @@ const firebaseConfig: FirebaseOptions = {
 };
 
 function initializeFirebase() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
   const db = getFirestore(app);
   const auth = getAuth(app);
 
-  if (typeof window !== 'undefined') {
-    isSupported().then((supported) => {
-      if (supported) {
-        getAnalytics(app);
-      }
-    });
-  }
+  isSupported().then((supported) => {
+    if (supported) {
+      getAnalytics(app);
+    }
+  });
   
   return { app, db, auth };
 }
