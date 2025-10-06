@@ -24,24 +24,13 @@ export function useAuth() {
         router.push('/dashboard');
       }
       
-      if (!user && !isAuthPage && pathname !== '/') {
-        // Redirect to login if not authenticated and not on a public page
-        const publicPages = ['/your-story', '/upcoming-events', '/ask-a-mentor', '/support-circles']; // Add any other public pages
-        if(!publicPages.some(page => pathname.startsWith(page)) && !pathname.startsWith('/auth')) {
-             router.push('/');
-        }
+      if (!user && !isAuthPage) {
+        router.push('/');
       }
     });
 
     return () => unsubscribe();
   }, [auth, router, pathname]);
-
-  // Adjust redirect for dashboard access
-  useEffect(() => {
-    if (!loading && !user && pathname.startsWith('/dashboard')) {
-        router.push('/');
-    }
-  }, [user, loading, pathname, router]);
 
   return { user, loading };
 }

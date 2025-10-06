@@ -5,6 +5,7 @@ import { z } from "zod";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { initializeFirebase } from "@/firebase";
 import { revalidatePath } from "next/cache";
+import { getAuth } from "firebase/auth";
 
 const QuestionSchema = z.object({
   name: z.string().optional(),
@@ -15,7 +16,14 @@ const QuestionSchema = z.object({
 });
 
 export async function askQuestion(values: z.infer<typeof QuestionSchema>) {
-  const { db } = initializeFirebase();
+  const { db, app } = initializeFirebase();
+  const auth = getAuth(app);
+  const user = auth.currentUser;
+
+  if (!user) {
+    return { error: "You must be logged in to ask a question." };
+  }
+
   const validatedFields = QuestionSchema.safeParse(values);
 
   if (!validatedFields.success) {
@@ -26,9 +34,10 @@ export async function askQuestion(values: z.infer<typeof QuestionSchema>) {
 
   try {
     await addDoc(collection(db, "questions"), {
-      name: validatedFields.data.name || "Anonymous",
+      userId: user.uid,
+      name: validatedFields.data.name || user.displayName || "Anonymous",
       question: validatedFields.data.question,
-      answer: "", // Admin will fill this later
+      answer: "",
       createdAt: serverTimestamp(),
     });
 

@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { askQuestion } from "../actions";
 import { Send } from "lucide-react";
 import React from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 const questionSchema = z.object({
   name: z.string().optional(),
@@ -32,6 +33,7 @@ type QuestionFormValues = z.infer<typeof questionSchema>;
 
 export function QuestionForm() {
   const { toast } = useToast();
+  const { user } = useAuth();
   const form = useForm<QuestionFormValues>({
     resolver: zodResolver(questionSchema),
     defaultValues: {
@@ -42,7 +44,22 @@ export function QuestionForm() {
 
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
+  React.useEffect(() => {
+    if (user?.displayName) {
+      form.setValue("name", user.displayName);
+    }
+  }, [user, form]);
+
+
   async function onSubmit(values: QuestionFormValues) {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Authentication required",
+        description: "You must be logged in to ask a question.",
+      });
+      return;
+    }
     setIsSubmitting(true);
     const result = await askQuestion(values);
 
@@ -51,7 +68,7 @@ export function QuestionForm() {
         title: "Success!",
         description: "Your question has been submitted.",
       });
-      form.reset();
+      form.reset({ question: "", name: user.displayName || "" });
     } else {
       toast({
         variant: "destructive",
@@ -75,12 +92,13 @@ export function QuestionForm() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Your Name (Optional)</FormLabel>
+                  <FormLabel>Your Name</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Anonymous"
                       {...field}
                       className="bg-white/80 backdrop-blur-sm border-gray-300 shadow-inner"
+                      disabled={!!user?.displayName}
                     />
                   </FormControl>
                   <FormMessage />
@@ -105,10 +123,15 @@ export function QuestionForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isSubmitting} className="w-full">
+            <Button type="submit" disabled={isSubmitting || !user} className="w-full">
               <Send className="mr-2 h-4 w-4" />
               {isSubmitting ? "Submitting..." : "Submit Question"}
             </Button>
+             {!user && (
+              <p className="text-xs text-center text-gray-500">
+                Please sign in to ask a question.
+              </p>
+            )}
           </form>
         </Form>
       </CardContent>

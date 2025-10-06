@@ -1,0 +1,173 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Represents a user's profile in the system.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The user's unique ID."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The user's first name."
+        },
+        "surname": {
+          "type": "string",
+          "description": "The user's surname."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The user's full name."
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "format": "date",
+          "description": "The user's date of birth."
+        },
+        "cellphoneNumber": {
+          "type": "string",
+          "description": "The user's cellphone number."
+        },
+        "city": {
+          "type": "string",
+          "description": "The city where the user lives."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "The user's email address."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the user was created."
+        }
+      },
+      "required": ["uid", "firstName", "surname", "displayName", "email", "createdAt"]
+    },
+    "Question": {
+      "title": "Question",
+      "description": "A question submitted by a user to a mentor.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "question": {
+          "type": "string"
+        },
+        "answer": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["userId", "name", "question", "createdAt"]
+    },
+    "Story": {
+      "title": "Story",
+      "description": "An inspirational story shared by a user.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "story": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["userId", "author", "title", "story", "createdAt"]
+    },
+    "SupportCircleMessage": {
+      "title": "Support Circle Message",
+      "description": "A message in the public support chat.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "sender": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["userId", "sender", "text", "createdAt"]
+    },
+    "Event": {
+      "title": "Event",
+      "description": "An upcoming event or workshop.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["title", "description", "date"]
+    }
+  },
+  "auth": {
+    "providers": ["email"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Stores public profiles for users."
+    },
+    "/questions/{questionId}": {
+      "schema": {
+        "$ref": "#/entities/Question"
+      },
+      "description": "Stores questions submitted by users for mentors."
+    },
+    "/stories/{storyId}": {
+      "schema": {
+        "$ref": "#/entities/Story"
+      },
+      "description": "Stores inspirational stories shared by users."
+    },
+    "/support_circle_messages/{messageId}": {
+      "schema": {
+        "$ref": "#/entities/SupportCircleMessage"
+      },
+      "description": "Stores messages for the public support circle chat."
+    },
+    "/events/{eventId}": {
+      "schema": {
+        "$ref": "#/entities/Event"
+      },
+      "description": "Stores upcoming community events."
+    }
+  }
+}

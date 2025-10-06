@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { shareStory } from "../actions";
 import { PenSquare } from "lucide-react";
 import React from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 const storySchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters.").max(100),
@@ -33,6 +34,7 @@ type StoryFormValues = z.infer<typeof storySchema>;
 
 export function StoryForm() {
   const { toast } = useToast();
+  const { user } = useAuth();
   const form = useForm<StoryFormValues>({
     resolver: zodResolver(storySchema),
     defaultValues: {
@@ -43,8 +45,22 @@ export function StoryForm() {
   });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
+  React.useEffect(() => {
+    if (user?.displayName) {
+      form.setValue("author", user.displayName);
+    }
+  }, [user, form]);
+
 
   async function onSubmit(values: StoryFormValues) {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Authentication required",
+        description: "You must be logged in to share a story.",
+      });
+      return;
+    }
     setIsSubmitting(true);
     const result = await shareStory(values);
 
@@ -53,7 +69,7 @@ export function StoryForm() {
         title: "Thank you for sharing!",
         description: "Your story has been published.",
       });
-      form.reset();
+      form.reset({ title: "", story: "", author: user.displayName || "" });
     } else {
       toast({
         variant: "destructive",
@@ -90,9 +106,9 @@ export function StoryForm() {
               name="author"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Your Name (Optional)</FormLabel>
+                  <FormLabel>Your Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Anonymous" {...field} className="bg-white/80 backdrop-blur-sm border-gray-300 shadow-inner" />
+                    <Input placeholder="Anonymous" {...field} className="bg-white/80 backdrop-blur-sm border-gray-300 shadow-inner" disabled={!!user?.displayName} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -116,10 +132,15 @@ export function StoryForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isSubmitting} className="w-full">
+            <Button type="submit" disabled={isSubmitting || !user} className="w-full">
               <PenSquare className="mr-2 h-4 w-4" />
               {isSubmitting ? "Publishing..." : "Publish Story"}
             </Button>
+             {!user && (
+              <p className="text-xs text-center text-gray-500">
+                Please sign in to share your story.
+              </p>
+            )}
           </form>
         </Form>
       </CardContent>

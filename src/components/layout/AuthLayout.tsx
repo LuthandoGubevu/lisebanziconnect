@@ -2,15 +2,23 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Skeleton } from "@/components/ui/skeleton";
-import React from "react";
+import React, { useEffect } from "react";
 
 export function AuthLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
   const isAuthPage = pathname === "/";
+
+  useEffect(() => {
+    if (!loading && !user && !isAuthPage) {
+      router.push("/");
+    }
+  }, [user, loading, isAuthPage, router]);
+
 
   if (loading) {
     return (
@@ -22,6 +30,14 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
 
   if (user && !isAuthPage) {
     return <AppLayout>{children}</AppLayout>;
+  }
+  
+  if (user && isAuthPage) {
+    return null; // or a redirect component
+  }
+
+  if (!user && !isAuthPage) {
+    return null; // or a redirect component
   }
 
   return <>{children}</>;

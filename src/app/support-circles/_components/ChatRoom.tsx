@@ -22,6 +22,7 @@ import { sendMessage } from "../actions";
 import { Send } from "lucide-react";
 import { MessageBubble } from "./MessageBubble";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/hooks/useAuth";
 
 const messageSchema = z.object({
   text: z.string().min(1).max(500),
@@ -36,12 +37,19 @@ export function ChatRoom() {
   const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { db } = useFirebase();
+  const { user } = useAuth();
   
   const form = useForm<MessageFormValues>({
     resolver: zodResolver(messageSchema),
     defaultValues: { text: "", sender: "" },
   });
   const {formState: { isSubmitting }} = form;
+
+  useEffect(() => {
+    if (user?.displayName) {
+      form.setValue("sender", user.displayName);
+    }
+  }, [user, form]);
 
   useEffect(() => {
     const q = query(
@@ -56,19 +64,35 @@ export function ChatRoom() {
       });
       setMessages(msgs);
       setLoading(false);
+    }, (error) => {
+        console.error("Error fetching messages:", error);
+        toast({
+            variant: "destructive",
+            title: "Error fetching messages",
+            description: "Could not load chat history. Please check your connection or permissions."
+        })
+        setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [db]);
+  }, [db, toast]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   async function onSubmit(values: MessageFormValues) {
+     if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Authentication required",
+        description: "You must be logged in to send a message.",
+      });
+      return;
+    }
     const result = await sendMessage(values);
     if (result.success) {
-      form.reset({text: "", sender: values.sender}); // Keep sender name
+      form.reset({text: "", sender: values.sender}); 
     } else {
       toast({
         variant: "destructive",
@@ -126,20 +150,26 @@ export function ChatRoom() {
                       <FormControl>
                         <Input
                           autoComplete="off"
-                          placeholder="Your Name (Optional)"
+                          placeholder="Your Name"
                            className="bg-white/80 backdrop-blur-sm border-gray-300 shadow-inner text-sm"
                           {...field}
+                           disabled={!!user?.displayName}
                         />
                       </FormControl>
                     </FormItem>
                   )}
                 />
             </div>
-            <Button type="submit" size="icon" disabled={isSubmitting} className="aspect-square h-auto self-stretch">
+            <Button type="submit" size="icon" disabled={isSubmitting || !user} className="aspect-square h-auto self-stretch">
               <Send className="size-5" />
               <span className="sr-only">Send</span>
             </Button>
           </form>
+           {!user && (
+              <p className="text-xs text-center text-gray-500 pt-2">
+                Please sign in to join the chat.
+              </p>
+            )}
         </Form>
       </div>
     </div>
