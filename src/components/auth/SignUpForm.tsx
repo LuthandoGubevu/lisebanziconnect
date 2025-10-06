@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { useFirebase } from "@/firebase/provider";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -83,13 +83,13 @@ export function SignUpForm() {
         cellphoneNumber: values.cellphoneNumber,
         city: values.city,
         email: values.email,
-        createdAt: serverTimestamp(),
+        createdAt: new Date(),
       };
 
       setDoc(userDocRef, userProfileData)
         .then(() => {
           toast({ title: "Account created successfully!" });
-          router.push("/dashboard");
+          router.push("/ask-a-mentor");
         })
         .catch(async (serverError: any) => {
            // Create the rich, contextual error.

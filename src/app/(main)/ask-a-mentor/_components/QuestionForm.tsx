@@ -62,7 +62,7 @@ export function QuestionForm() {
       return;
     }
     setIsSubmitting(true);
-    const result = await askQuestion(values);
+    const result = await askQuestion(values, user.uid, user.displayName);
 
     if (result.success) {
       toast({

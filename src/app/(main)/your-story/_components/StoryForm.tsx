@@ -63,7 +63,7 @@ export function StoryForm() {
       return;
     }
     setIsSubmitting(true);
-    const result = await shareStory(values);
+    const result = await shareStory(values, user.uid, user.displayName);
 
     if (result.success) {
       toast({

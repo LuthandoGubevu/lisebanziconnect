@@ -2,21 +2,19 @@
 "use server";
 
 import { z } from "zod";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { initializeFirebase } from "@/firebase";
-import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase-admin/firestore";
+import { initializeAdminApp } from "@/firebase/admin";
 
 const MessageSchema = z.object({
   text: z.string().min(1, "Message cannot be empty.").max(500, "Message is too long."),
   sender: z.string().optional(),
 });
 
-export async function sendMessage(values: z.infer<typeof MessageSchema>) {
-  const { db, app } = initializeFirebase();
-  const auth = getAuth(app);
-  const user = auth.currentUser;
+export async function sendMessage(values: z.infer<typeof MessageSchema>, userId: string, userDisplayName: string | null) {
+  const { app } = await initializeAdminApp();
+  const db = getFirestore(app);
 
-  if (!user) {
+  if (!userId) {
     return { error: "You must be logged in to send a message." };
   }
 
@@ -29,11 +27,11 @@ export async function sendMessage(values: z.infer<typeof MessageSchema>) {
   }
 
   try {
-    await addDoc(collection(db, "support_circle_messages"), {
-      userId: user.uid,
+    await db.collection("support_circle_messages").add({
+      userId: userId,
       text: validatedFields.data.text,
-      sender: validatedFields.data.sender || user.displayName || "Anonymous",
-      createdAt: serverTimestamp(),
+      sender: validatedFields.data.sender || userDisplayName || "Anonymous",
+      createdAt: new Date(),
     });
 
     return { success: true };

@@ -2,10 +2,9 @@
 "use server";
 
 import { z } from "zod";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { initializeFirebase } from "@/firebase";
+import { getFirestore } from "firebase-admin/firestore";
+import { initializeAdminApp } from "@/firebase/admin";
 import { revalidatePath } from "next/cache";
-import { getAuth } from "firebase/auth";
 
 const StorySchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters.").max(100),
@@ -16,12 +15,11 @@ const StorySchema = z.object({
     .max(5000, "Story must be less than 5000 characters."),
 });
 
-export async function shareStory(values: z.infer<typeof StorySchema>) {
-  const { db, app } = initializeFirebase();
-  const auth = getAuth(app);
-  const user = auth.currentUser;
+export async function shareStory(values: z.infer<typeof StorySchema>, userId: string, userDisplayName: string | null) {
+  const { app } = await initializeAdminApp();
+  const db = getFirestore(app);
 
-  if (!user) {
+  if (!userId) {
     return { error: "You must be logged in to share a story." };
   }
 
@@ -34,12 +32,12 @@ export async function shareStory(values: z.infer<typeof StorySchema>) {
   }
 
   try {
-    await addDoc(collection(db, "stories"), {
-      userId: user.uid,
+    await db.collection("stories").add({
+      userId: userId,
       title: validatedFields.data.title,
-      author: validatedFields.data.author || user.displayName || "Anonymous",
+      author: validatedFields.data.author || userDisplayName || "Anonymous",
       story: validatedFields.data.story,
-      createdAt: serverTimestamp(),
+      createdAt: new Date(),
     });
 
     revalidatePath("/your-story");

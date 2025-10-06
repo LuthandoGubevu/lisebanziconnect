@@ -90,7 +90,7 @@ export function ChatRoom() {
       });
       return;
     }
-    const result = await sendMessage(values);
+    const result = await sendMessage(values, user.uid, user.displayName);
     if (result.success) {
       form.reset({text: "", sender: values.sender}); 
     } else {

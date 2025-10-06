@@ -2,10 +2,10 @@
 "use server";
 
 import { z } from "zod";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { initializeFirebase } from "@/firebase";
+import { getAuth } from "firebase-admin/auth";
+import { getFirestore } from "firebase-admin/firestore";
+import { initializeAdminApp } from "@/firebase/admin";
 import { revalidatePath } from "next/cache";
-import { getAuth } from "firebase/auth";
 
 const QuestionSchema = z.object({
   name: z.string().optional(),
@@ -15,12 +15,11 @@ const QuestionSchema = z.object({
     .max(1000, "Question must be less than 1000 characters."),
 });
 
-export async function askQuestion(values: z.infer<typeof QuestionSchema>) {
-  const { db, app } = initializeFirebase();
-  const auth = getAuth(app);
-  const user = auth.currentUser;
+export async function askQuestion(values: z.infer<typeof QuestionSchema>, userId: string, userDisplayName: string | null) {
+  const { app } = await initializeAdminApp();
+  const db = getFirestore(app);
 
-  if (!user) {
+  if (!userId) {
     return { error: "You must be logged in to ask a question." };
   }
 
@@ -33,12 +32,12 @@ export async function askQuestion(values: z.infer<typeof QuestionSchema>) {
   }
 
   try {
-    await addDoc(collection(db, "questions"), {
-      userId: user.uid,
-      name: validatedFields.data.name || user.displayName || "Anonymous",
+    await db.collection("questions").add({
+      userId: userId,
+      name: validatedFields.data.name || userDisplayName || "Anonymous",
       question: validatedFields.data.question,
       answer: "",
-      createdAt: serverTimestamp(),
+      createdAt: new Date(),
     });
 
     revalidatePath("/ask-a-mentor");

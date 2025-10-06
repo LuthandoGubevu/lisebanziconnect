@@ -1,11 +1,14 @@
+
 import type { Timestamp } from 'firebase/firestore';
+import type { Timestamp as AdminTimestamp } from 'firebase-admin/firestore';
+
 
 export interface Question {
   id: string;
   name: string;
   question: string;
   answer: string;
-  createdAt: Timestamp;
+  createdAt: Timestamp | AdminTimestamp;
 }
 
 export interface Story {
@@ -13,19 +16,19 @@ export interface Story {
   title: string;
   story: string;
   author: string;
-  createdAt: Timestamp;
+  createdAt: Timestamp | AdminTimestamp;
 }
 
 export interface Event {
   id: string;
   title: string;
   description: string;
-  date: Timestamp;
+  date: Timestamp | AdminTimestamp;
 }
 
 export interface Message {
   id: string;
   text: string;
   sender: string;
-  createdAt: Timestamp;
+  createdAt: Timestamp | AdminTimestamp;
 }
