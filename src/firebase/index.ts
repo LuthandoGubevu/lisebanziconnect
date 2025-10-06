@@ -15,7 +15,7 @@ const firebaseConfig: FirebaseOptions = {
 };
 
 function initializeFirebase() {
-  if (typeof window === 'undefined') {
+  if (typeof window === 'undefined' || !firebaseConfig.apiKey) {
     return null;
   }
   
@@ -33,3 +33,4 @@ function initializeFirebase() {
 }
 
 export { initializeFirebase };
+
