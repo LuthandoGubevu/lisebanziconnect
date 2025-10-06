@@ -23,8 +23,8 @@ export default function AuthPage() {
           />
         </div>
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-gray-800">
-            {isSigningUp ? "Create an Account" : "Lisebanzi Connect"}
+          <CardTitle className="text-2xl font-bold" style={{ color: '#682d91', textTransform: 'uppercase' }}>
+            {isSigningUp ? "Create an Account" : "LISEBANZI CONNECT"}
           </CardTitle>
         </CardHeader>
         <CardContent>
