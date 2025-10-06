@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import { Header } from "./Header";
 
 const navItems = [
   { href: "/", label: "Home", icon: <Home className="size-5" /> },
@@ -25,7 +26,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex flex-col min-h-screen">
-       <main className="flex-1 p-4 sm:p-6 pb-24">
+      <Header />
+      <main className="flex-1 pt-16 p-4 sm:p-6 pb-24">
         {children}
       </main>
 
