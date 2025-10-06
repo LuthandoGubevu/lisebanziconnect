@@ -24,7 +24,7 @@ export default function AuthPage() {
         </div>
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-gray-800">
-            {isSigningUp ? "Create an Account" : "Welcome Back"}
+            {isSigningUp ? "Create an Account" : "Lisebanzi Connect"}
           </CardTitle>
         </CardHeader>
         <CardContent>
