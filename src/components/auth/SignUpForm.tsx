@@ -15,14 +15,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { useFirebase } from "@/firebase/provider";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
-  displayName: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  firstName: z.string().min(2, { message: "First name must be at least 2 characters." }),
+  surname: z.string().min(2, { message: "Surname must be at least 2 characters." }),
+  dateOfBirth: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "Invalid date format." }),
+  cellphoneNumber: z.string().min(10, { message: "Cellphone number must be at least 10 digits." }),
+  city: z.string().min(2, { message: "City must be at least 2 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
 });
@@ -36,7 +40,11 @@ export function SignUpForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      displayName: "",
+      firstName: "",
+      surname: "",
+      dateOfBirth: "",
+      cellphoneNumber: "",
+      city: "",
       email: "",
       password: "",
     },
@@ -51,10 +59,18 @@ export function SignUpForm() {
         values.password
       );
       const user = userCredential.user;
+      
+      const displayName = `${values.firstName} ${values.surname}`;
+      await updateProfile(user, { displayName });
 
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
-        displayName: values.displayName,
+        firstName: values.firstName,
+        surname: values.surname,
+        displayName: displayName,
+        dateOfBirth: values.dateOfBirth,
+        cellphoneNumber: values.cellphoneNumber,
+        city: values.city,
         email: values.email,
         createdAt: serverTimestamp(),
       });
@@ -75,14 +91,68 @@ export function SignUpForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="John" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="surname"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Surname</FormLabel>
+                <FormControl>
+                  <Input placeholder="Doe" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+         <FormField
           control={form.control}
-          name="displayName"
+          name="dateOfBirth"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Date of Birth</FormLabel>
               <FormControl>
-                <Input placeholder="Your Name" {...field} />
+                <Input type="date" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+         <FormField
+          control={form.control}
+          name="cellphoneNumber"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Cellphone Number</FormLabel>
+              <FormControl>
+                <Input placeholder="0821234567" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="city"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>City</FormLabel>
+              <FormControl>
+                <Input placeholder="e.g. Cape Town" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
