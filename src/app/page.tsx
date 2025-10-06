@@ -17,8 +17,8 @@ export default function AuthPage() {
           <Image
             src="/Lisebanzi Foundation .jpg"
             alt="Lisebanzi Foundation Logo"
-            width={100}
-            height={100}
+            width={200}
+            height={200}
             className="rounded-full"
           />
         </div>
