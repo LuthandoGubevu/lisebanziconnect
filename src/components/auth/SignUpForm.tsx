@@ -21,6 +21,8 @@ import { useFirebase } from "@/firebase/provider";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
+import { FirestorePermissionError, type SecurityRuleContext } from "@/firebase/errors";
+import { errorEmitter } from "@/firebase/error-emitter";
 
 const formSchema = z.object({
   firstName: z.string().min(2, { message: "First name must be at least 2 characters." }),
@@ -71,7 +73,8 @@ export function SignUpForm() {
       const displayName = `${values.firstName} ${values.surname}`;
       await updateProfile(user, { displayName });
 
-      await setDoc(doc(db, "users", user.uid), {
+      const userDocRef = doc(db, "users", user.uid);
+      const userProfileData = {
         uid: user.uid,
         firstName: values.firstName,
         surname: values.surname,
@@ -81,19 +84,40 @@ export function SignUpForm() {
         city: values.city,
         email: values.email,
         createdAt: serverTimestamp(),
-      });
+      };
 
-      toast({ title: "Account created successfully!" });
-      router.push("/ask-a-mentor");
+      setDoc(userDocRef, userProfileData)
+        .then(() => {
+          toast({ title: "Account created successfully!" });
+          router.push("/ask-a-mentor");
+        })
+        .catch(async (serverError: any) => {
+           // Create the rich, contextual error.
+          const permissionError = new FirestorePermissionError({
+            path: userDocRef.path,
+            operation: 'create',
+            requestResourceData: userProfileData,
+          } satisfies SecurityRuleContext);
+
+          // Emit the error for the listener to catch and display.
+          errorEmitter.emit('permission-error', permissionError);
+
+          // Also show a generic error to the user.
+          toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong.",
+            description: "Could not save user profile. Please try again.",
+          });
+        });
+
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
         description: error.message,
       });
-    } finally {
-        setIsSubmitting(false);
-    }
+       setIsSubmitting(false); // only set false on auth error
+    } 
   }
 
   return (
