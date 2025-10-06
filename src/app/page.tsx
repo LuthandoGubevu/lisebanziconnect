@@ -11,7 +11,7 @@ export default function AuthPage() {
   const [isSigningUp, setIsSigningUp] = useState(false);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white p-4">
       <Card className="w-full max-w-md shadow-lg bg-white/80 backdrop-blur-lg border-gray-200">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">
