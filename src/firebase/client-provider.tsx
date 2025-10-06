@@ -1,19 +1,23 @@
 
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { initializeFirebase } from './index';
 import { FirebaseProvider } from './provider';
 import { AuthLayout } from '@/components/layout/AuthLayout';
-
-// Initialize Firebase within the provider component to ensure it only runs on the client.
-const firebaseInstances = initializeFirebase();
 
 export function FirebaseClientProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Use useMemo to ensure Firebase is initialized only once per render cycle on the client.
+  const firebaseInstances = useMemo(() => initializeFirebase(), []);
+
+  if (!firebaseInstances) {
+    return <div>Loading...</div>; // Or a proper loading skeleton
+  }
+  
   const { app, auth, db } = firebaseInstances;
   
   return (
