@@ -52,10 +52,11 @@ import { useFirebase } from "@/firebase/provider";
 
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: <LayoutDashboard className="size-5" /> },
+  { href: "/ask-a-mentor", label: "Ask a Mentor", icon: <HelpCircle className="size-5" /> },
   { href: "/support-circles", label: "Support Circles", icon: <HeartHandshake className="size-5" /> },
   { href: "/my-story", label: "My Story", icon: <BookUser className="size-5" /> },
   { href: "/community-stories", label: "Community Stories", icon: <Users className="size-5" /> },
+  { href: "/upcoming-events", label: "Upcoming Events", icon: <CalendarDays className="size-5" /> },
   { href: "/education-hub", label: "Education Hub", icon: <GraduationCap className="size-5" /> },
   { href: "/leadership-path", label: "Leadership Path", icon: <TrendingUp className="size-5" /> },
   { href: "/insights", label: "Insights", icon: <BarChart3 className="size-5" /> },
@@ -129,13 +130,13 @@ function DistressCallButton() {
 
 function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { isMobile } = useSidebar();
+  const { isMobile, setOpenMobile } = useSidebar();
   
   return (
     <>
       <Sidebar side="left" collapsible="icon" variant="sidebar">
         <SidebarHeader className="flex items-center justify-between">
-            <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl">
+            <Link href="/ask-a-mentor" className="flex items-center gap-2 font-bold text-xl">
             <Siren className="size-6 text-blue-600" />
             <span>Lisebanzi</span>
             </Link>
@@ -153,9 +154,9 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
                         tooltip={{ children: item.label }}
                         className="justify-start"
                     >
-                        <Link href={item.href}>
-                        {item.icon}
-                        <span>{item.label}</span>
+                        <Link href={item.href} onClick={() => { if (isMobile) setOpenMobile(false)}}>
+                          {item.icon}
+                          <span>{item.label}</span>
                         </Link>
                     </SidebarMenuButton>
                     </SidebarMenuItem>
