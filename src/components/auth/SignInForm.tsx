@@ -46,7 +46,7 @@ export function SignInForm() {
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
       toast({ title: "Signed in successfully!" });
-      router.push("/dashboard");
+      router.push("/ask-a-mentor");
     } catch (error: any) {
       toast({
         variant: "destructive",
