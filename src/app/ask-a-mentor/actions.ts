@@ -1,8 +1,9 @@
+
 "use server";
 
 import { z } from "zod";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { getFirebaseInstances } from "@/lib/firebase";
+import { initializeFirebase } from "@/firebase";
 import { revalidatePath } from "next/cache";
 
 const QuestionSchema = z.object({
@@ -14,7 +15,7 @@ const QuestionSchema = z.object({
 });
 
 export async function askQuestion(values: z.infer<typeof QuestionSchema>) {
-  const { db } = getFirebaseInstances();
+  const { db } = initializeFirebase();
   const validatedFields = QuestionSchema.safeParse(values);
 
   if (!validatedFields.success) {

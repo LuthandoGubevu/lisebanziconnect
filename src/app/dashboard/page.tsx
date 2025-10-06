@@ -2,13 +2,13 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { getFirebaseInstances } from "@/lib/firebase";
+import { useFirebase } from "@/firebase/provider";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/PageHeader";
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { auth } = getFirebaseInstances();
+  const { auth } = useFirebase();
 
   const handleSignOut = async () => {
     await auth.signOut();

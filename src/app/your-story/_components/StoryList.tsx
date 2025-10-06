@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,7 +9,7 @@ import {
   onSnapshot,
   Timestamp,
 } from "firebase/firestore";
-import { getFirebaseInstances } from "@/lib/firebase";
+import { useFirebase } from "@/firebase/provider";
 import type { Story } from "@/lib/types";
 import {
   Card,
@@ -32,7 +33,7 @@ function formatTimestamp(timestamp: Timestamp | null) {
 export function StoryList() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
-  const { db } = getFirebaseInstances();
+  const { db } = useFirebase();
 
 
   useEffect(() => {

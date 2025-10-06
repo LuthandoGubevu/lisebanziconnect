@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -11,7 +12,7 @@ import {
   onSnapshot,
   limit,
 } from "firebase/firestore";
-import { getFirebaseInstances } from "@/lib/firebase";
+import { useFirebase } from "@/firebase/provider";
 import type { Message } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -34,7 +35,7 @@ export function ChatRoom() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { db } = getFirebaseInstances();
+  const { db } = useFirebase();
   
   const form = useForm<MessageFormValues>({
     resolver: zodResolver(messageSchema),

@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { getFirebaseInstances } from "@/lib/firebase";
+import { useFirebase } from "@/firebase/provider";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -27,7 +27,7 @@ const formSchema = z.object({
 
 export function SignInForm() {
   const { toast } = useToast();
-  const { auth } = getFirebaseInstances();
+  const { auth } = useFirebase();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

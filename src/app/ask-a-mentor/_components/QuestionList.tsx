@@ -1,8 +1,9 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
 import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
-import { getFirebaseInstances } from "@/lib/firebase";
+import { useFirebase } from "@/firebase/provider";
 import type { Question } from "@/lib/types";
 import {
   Accordion,
@@ -23,7 +24,7 @@ function formatTimestamp(timestamp: Timestamp | null) {
 export function QuestionList() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
-  const { db } = getFirebaseInstances();
+  const { db } = useFirebase();
 
 
   useEffect(() => {

@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { getFirebaseInstances } from "@/lib/firebase";
+import { useFirebase } from "@/firebase/provider";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -29,7 +29,7 @@ const formSchema = z.object({
 
 export function SignUpForm() {
   const { toast } = useToast();
-  const { auth, db } = getFirebaseInstances();
+  const { auth, db } = useFirebase();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

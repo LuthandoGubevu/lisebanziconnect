@@ -1,10 +1,12 @@
+// This file is being deprecated in favor of the new provider-based setup.
+// The new entry point for Firebase is src/firebase/index.ts.
+// This file can be removed once all imports are updated.
+"use client";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp, type FirebaseOptions } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import "dotenv/config";
-
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,7 +9,7 @@ import {
   onSnapshot,
   Timestamp,
 } from "firebase/firestore";
-import { getFirebaseInstances } from "@/lib/firebase";
+import { useFirebase } from "@/firebase/provider";
 import type { Event } from "@/lib/types";
 import {
   Card,
@@ -33,7 +34,7 @@ function formatTimestamp(timestamp: Timestamp | null) {
 export function EventList() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-  const { db } = getFirebaseInstances();
+  const { db } = useFirebase();
 
 
   useEffect(() => {
@@ -62,11 +63,12 @@ export function EventList() {
 
   const addInitialEvent = async () => {
     const q = query(collection(db, "events"));
-    onSnapshot(q, (snapshot) => {
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       if (snapshot.empty) {
         const { addEvent } = require('../actions');
         addEvent();
       }
+      unsubscribe();
     });
   };
 
