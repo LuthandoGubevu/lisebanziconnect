@@ -5,14 +5,18 @@ import { initializeFirebase } from './index';
 import { FirebaseProvider } from './provider';
 import { AuthLayout } from '@/components/layout/AuthLayout';
 import { Skeleton } from '@/components/ui/skeleton';
+import type { FirebaseOptions } from 'firebase/app';
+
 
 export function FirebaseClientProvider({
   children,
+  config
 }: {
   children: React.ReactNode;
+  config: FirebaseOptions;
 }) {
-  // useMemo ensures this only runs once on the client, and `initializeFirebase` now has guards.
-  const firebaseInstances = useMemo(() => initializeFirebase(), []);
+  // useMemo ensures this only runs once on the client.
+  const firebaseInstances = useMemo(() => initializeFirebase(config), [config]);
 
   if (!firebaseInstances) {
     return (
