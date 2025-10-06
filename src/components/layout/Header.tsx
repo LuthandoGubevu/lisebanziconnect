@@ -1,23 +1,18 @@
+
 "use client";
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { SidebarTrigger } from '../ui/sidebar';
 
 export function Header() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-30 bg-white/80 backdrop-blur-lg shadow-sm border-b border-gray-200">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/logo-logo.png"
-            alt="Lisebanzi Connect Logo"
-            width={160}
-            height={40}
-            priority
-            className="h-8 w-auto"
-          />
-        </Link>
-      </div>
+    <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-lg px-4 sm:px-6">
+       <SidebarTrigger className="md:hidden"/>
+        <div className="flex-1">
+            {/* Can add search or other header elements here */}
+        </div>
+      {/* User profile button can go here */}
     </header>
   );
 }
