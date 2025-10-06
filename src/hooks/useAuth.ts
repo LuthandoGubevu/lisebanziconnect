@@ -26,7 +26,7 @@ export function useAuth() {
       
       if (!user && !isAuthPage && pathname !== '/') {
         // Redirect to login if not authenticated and not on a public page
-        const publicPages = ['/your-story', '/upcoming-events']; // Add any other public pages
+        const publicPages = ['/your-story', '/upcoming-events', '/ask-a-mentor', '/support-circles']; // Add any other public pages
         if(!publicPages.some(page => pathname.startsWith(page)) && !pathname.startsWith('/auth')) {
              router.push('/');
         }
