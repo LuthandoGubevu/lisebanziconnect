@@ -20,6 +20,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
+import { errorEmitter } from "@/firebase/error-emitter";
+import { FirestorePermissionError } from "@/firebase/errors";
 
 function formatTimestamp(timestamp: Timestamp | null) {
   if (!timestamp) return "Just now";
@@ -34,6 +37,7 @@ export function StoryList() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const { db } = useFirebase();
+  const { toast } = useToast();
 
 
   useEffect(() => {
@@ -49,13 +53,22 @@ export function StoryList() {
         setLoading(false);
       },
       (error) => {
-        console.error("Error fetching stories:", error);
+        const permissionError = new FirestorePermissionError({
+          path: "stories",
+          operation: 'list',
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        toast({
+          variant: "destructive",
+          title: "Permission Denied",
+          description: "You don't have permission to view stories."
+        });
         setLoading(false);
       }
     );
 
     return () => unsubscribe();
-  }, [db]);
+  }, [db, toast]);
 
   if (loading) {
     return (

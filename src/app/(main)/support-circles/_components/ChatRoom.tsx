@@ -23,6 +23,8 @@ import { Send } from "lucide-react";
 import { MessageBubble } from "./MessageBubble";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
+import { errorEmitter } from "@/firebase/error-emitter";
+import { FirestorePermissionError } from "@/firebase/errors";
 
 const messageSchema = z.object({
   text: z.string().min(1).max(500),
@@ -65,7 +67,11 @@ export function ChatRoom() {
       setMessages(msgs);
       setLoading(false);
     }, (error) => {
-        console.error("Error fetching messages:", error);
+        const permissionError = new FirestorePermissionError({
+          path: "support_circle_messages",
+          operation: 'list',
+        });
+        errorEmitter.emit('permission-error', permissionError);
         toast({
             variant: "destructive",
             title: "Error fetching messages",

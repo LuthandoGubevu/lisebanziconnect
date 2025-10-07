@@ -20,6 +20,9 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { errorEmitter } from "@/firebase/error-emitter";
+import { FirestorePermissionError } from "@/firebase/errors";
 
 function formatTimestamp(timestamp: Timestamp | null) {
   if (!timestamp) return "Date TBD";
@@ -35,6 +38,7 @@ export function EventList() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const { db } = useFirebase();
+  const { toast } = useToast();
 
 
   useEffect(() => {
@@ -53,13 +57,22 @@ export function EventList() {
         setLoading(false);
       },
       (error) => {
-        console.error("Error fetching events:", error);
+        const permissionError = new FirestorePermissionError({
+          path: "events",
+          operation: 'list',
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        toast({
+          variant: "destructive",
+          title: "Permission Denied",
+          description: "You don't have permission to view events."
+        });
         setLoading(false);
       }
     );
 
     return () => unsubscribe();
-  }, [db]);
+  }, [db, toast]);
 
   const addInitialEvent = async () => {
     const q = query(collection(db, "events"));

@@ -13,6 +13,9 @@ import {
 } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Bot, User } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { errorEmitter } from "@/firebase/error-emitter";
+import { FirestorePermissionError } from "@/firebase/errors";
 
 function formatTimestamp(timestamp: Timestamp | null) {
   if (!timestamp) return "Just now";
@@ -25,6 +28,7 @@ export function QuestionList() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const { db } = useFirebase();
+  const { toast } = useToast();
 
 
   useEffect(() => {
@@ -37,12 +41,21 @@ export function QuestionList() {
       setQuestions(questionsData);
       setLoading(false);
     }, (error) => {
-      console.error("Error fetching questions:", error);
+      const permissionError = new FirestorePermissionError({
+        path: "questions",
+        operation: 'list',
+      });
+      errorEmitter.emit('permission-error', permissionError);
+      toast({
+        variant: "destructive",
+        title: "Permission Denied",
+        description: "You don't have permission to view questions."
+      })
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [db]);
+  }, [db, toast]);
 
   if (loading) {
     return (
