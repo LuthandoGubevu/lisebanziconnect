@@ -19,6 +19,8 @@ import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 
 function formatTimestamp(timestamp: Timestamp | null | Date) {
@@ -48,6 +50,14 @@ export function StoryList() {
   const [permissionError, setPermissionError] = useState(false);
   const { toast } = useToast();
   const { db } = useFirebase();
+  const [expandedStories, setExpandedStories] = useState<string[]>([]);
+
+  const toggleStory = (storyId: string) => {
+    setExpandedStories(prev => 
+      prev.includes(storyId) ? prev.filter(id => id !== storyId) : [...prev, storyId]
+    );
+  };
+
 
   useEffect(() => {
     const q = query(collection(db, "stories"), orderBy("createdAt", "desc"));
@@ -108,24 +118,29 @@ export function StoryList() {
 
   return (
     <div className="space-y-6">
-      {stories.map((story) => (
-        <Card key={story.id} className="shadow-md hover:shadow-lg transition-shadow duration-300 rounded-xl bg-white/80 backdrop-blur-lg border-gray-200">
-          <CardHeader className="p-6">
-            <CardTitle className="text-blue-600 text-xl">{story.title}</CardTitle>
-            <CardDescription className="text-xs text-gray-500 pt-1">
-              By {story.author} on {formatTimestamp(story.createdAt)}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-6 pt-0">
-            <p className="line-clamp-3 text-base text-gray-700 break-words">
-              {story.story}
-            </p>
-          </CardContent>
-           {/* Future "Read More" button can go here in the footer */}
-          <CardFooter>
-          </CardFooter>
-        </Card>
-      ))}
+      {stories.map((story) => {
+        const isExpanded = expandedStories.includes(story.id);
+        return (
+          <Card key={story.id} className="shadow-md hover:shadow-lg transition-shadow duration-300 rounded-xl bg-white/80 backdrop-blur-lg border-gray-200">
+            <CardHeader className="p-6">
+              <CardTitle className="text-blue-600 text-xl">{story.title}</CardTitle>
+              <CardDescription className="text-xs text-gray-500 pt-1">
+                By {story.author} on {formatTimestamp(story.createdAt)}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6 pt-0">
+              <p className={cn("text-base text-gray-700 break-words", !isExpanded && "line-clamp-3")}>
+                {story.story}
+              </p>
+            </CardContent>
+            <CardFooter>
+              <Button variant="link" className="p-0 h-auto" onClick={() => toggleStory(story.id)}>
+                {isExpanded ? 'View Less' : 'View All'}
+              </Button>
+            </CardFooter>
+          </Card>
+        )
+      })}
     </div>
   );
 }
