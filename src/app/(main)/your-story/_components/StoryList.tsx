@@ -105,25 +105,34 @@ export function StoryList() {
     )
   }
 
-  const storiesToDisplay = stories.length === 0 ? [mockStory] : stories;
+  const storiesToDisplay = stories.length === 0 && !permissionError ? [mockStory] : stories;
+
+  if (storiesToDisplay.length === 0) {
+      return (
+          <div className="text-center text-gray-500 italic py-10">
+              No stories yet. Be the first to share your journey.
+          </div>
+      );
+  }
+
 
   return (
     <div className="space-y-6">
       {storiesToDisplay.map((story) => (
-        <Card key={story.id} className="shadow-lg bg-white/80 backdrop-blur-lg border-gray-200">
-          <CardHeader>
-            <CardTitle className="text-blue-600">{story.title}</CardTitle>
-            <CardDescription>
+        <Card key={story.id} className="shadow-md hover:shadow-lg transition-shadow duration-300 rounded-xl bg-white/80 backdrop-blur-lg border-gray-200 w-full">
+          <CardHeader className="p-6">
+            <CardTitle className="text-blue-600 text-xl">{story.title}</CardTitle>
+            <CardDescription className="text-xs text-gray-500 pt-1">
               By {story.author} on {formatTimestamp(story.createdAt)}
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <p className="line-clamp-4 whitespace-pre-wrap text-gray-700">
+          <CardContent className="p-6 pt-0">
+            <p className="line-clamp-3 whitespace-pre-wrap text-base text-gray-700">
               {story.story}
             </p>
           </CardContent>
+           {/* Future "Read More" button can go here in the footer */}
           <CardFooter>
-            {/* Can add a "Read More" button later if stories are long */}
           </CardFooter>
         </Card>
       ))}
