@@ -4,7 +4,6 @@
 import { getFirestore, Timestamp } from "firebase-admin/firestore";
 import { initializeAdminApp } from "@/firebase/admin";
 import { revalidatePath } from "next/cache";
-import type { Event } from "@/lib/types";
 
 // This action is for seeding data. In a real app, you'd have a proper form and validation.
 export async function addEvent() {
@@ -25,16 +24,4 @@ export async function addEvent() {
     console.error("Error adding event:", error);
     return { success: false, error: "Failed to add event." };
   }
-}
-
-export async function getEvents(): Promise<{ success: boolean; data?: Event[]; error?: string; }> {
-    try {
-        const { db } = await initializeAdminApp();
-        const eventsSnapshot = await db.collection("events").orderBy("date", "asc").get();
-        const events: Event[] = eventsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Event));
-        return { success: true, data: events };
-    } catch (error) {
-        console.error("Error fetching events: ", error);
-        return { success: false, error: "Failed to retrieve events." };
-    }
 }

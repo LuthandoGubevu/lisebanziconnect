@@ -5,7 +5,6 @@ import { z } from "zod";
 import { getFirestore } from "firebase-admin/firestore";
 import { initializeAdminApp } from "@/firebase/admin";
 import { revalidatePath } from "next/cache";
-import type { Story } from "@/lib/types";
 
 const StorySchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters.").max(100),
@@ -49,16 +48,4 @@ export async function shareStory(values: z.infer<typeof StorySchema>, userId: st
     console.error("Error adding story: ", error);
     return { success: false, error: "Failed to publish story. Please try again." };
   }
-}
-
-export async function getStories(): Promise<{ success: boolean; data?: Story[]; error?: string; }> {
-    try {
-        const { db } = await initializeAdminApp();
-        const storiesSnapshot = await db.collection("stories").orderBy("createdAt", "desc").get();
-        const stories: Story[] = storiesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Story));
-        return { success: true, data: stories };
-    } catch (error) {
-        console.error("Error fetching stories: ", error);
-        return { success: false, error: "Failed to retrieve stories." };
-    }
 }

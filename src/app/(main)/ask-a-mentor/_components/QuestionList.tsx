@@ -2,8 +2,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Timestamp } from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy, Timestamp } from "firebase/firestore";
 import type { Question } from "@/lib/types";
+import { useFirebase } from "@/firebase/provider";
 import {
   Accordion,
   AccordionContent,
@@ -11,9 +12,11 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Bot } from "lucide-react";
+import { Bot, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getQuestions } from "../actions";
+import { errorEmitter } from "@/firebase/error-emitter";
+import { FirestorePermissionError } from "@/firebase/errors";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 function formatTimestamp(timestamp: Timestamp | string | null) {
   if (!timestamp) return "Just now";
@@ -38,25 +41,36 @@ function formatTimestamp(timestamp: Timestamp | string | null) {
 export function QuestionList() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
+  const [permissionError, setPermissionError] = useState(false);
   const { toast } = useToast();
+  const { db } = useFirebase();
 
   useEffect(() => {
-    async function fetchQuestions() {
-      const result = await getQuestions();
-      if (result.success && result.data) {
-        setQuestions(result.data);
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Failed to load questions",
-          description: result.error || "Could not load question history.",
+    const q = query(collection(db, "questions"), orderBy("createdAt", "desc"));
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const questionsData: Question[] = [];
+        querySnapshot.forEach((doc) => {
+          questionsData.push({ id: doc.id, ...doc.data() } as Question);
         });
+        setQuestions(questionsData);
+        setLoading(false);
+        setPermissionError(false);
+      },
+      (error) => {
+        const permissionError = new FirestorePermissionError({
+          path: "questions",
+          operation: "list",
+        });
+        errorEmitter.emit("permission-error", permissionError);
+        setLoading(false);
+        setPermissionError(true);
       }
-      setLoading(false);
-    }
+    );
 
-    fetchQuestions();
-  }, [toast]);
+    return () => unsubscribe();
+  }, [db, toast]);
 
   if (loading) {
     return (
@@ -66,6 +80,18 @@ export function QuestionList() {
         ))}
       </div>
     );
+  }
+
+  if (permissionError) {
+    return (
+       <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Content Unavailable</AlertTitle>
+        <AlertDescription>
+          We're currently experiencing technical difficulties and cannot load the questions. Our team has been notified. Please try again later.
+        </AlertDescription>
+      </Alert>
+    )
   }
 
   if (questions.length === 0) {

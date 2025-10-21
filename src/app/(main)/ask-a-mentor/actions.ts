@@ -5,7 +5,6 @@ import { z } from "zod";
 import { getFirestore } from "firebase-admin/firestore";
 import { initializeAdminApp } from "@/firebase/admin";
 import { revalidatePath } from "next/cache";
-import type { Question } from "@/lib/types";
 
 const QuestionSchema = z.object({
   name: z.string().optional(),
@@ -47,16 +46,4 @@ export async function askQuestion(values: z.infer<typeof QuestionSchema>, userId
     console.error("Error adding document: ", error);
     return { success: false, error: "Failed to submit question. Please try again." };
   }
-}
-
-export async function getQuestions(): Promise<{ success: boolean; data?: Question[]; error?: string; }> {
-    try {
-        const { db } = await initializeAdminApp();
-        const questionsSnapshot = await db.collection("questions").orderBy("createdAt", "desc").get();
-        const questions: Question[] = questionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Question));
-        return { success: true, data: questions };
-    } catch (error) {
-        console.error("Error fetching questions: ", error);
-        return { success: false, error: "Failed to retrieve questions." };
-    }
 }

@@ -2,8 +2,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Timestamp } from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy, Timestamp } from "firebase/firestore";
 import type { Story } from "@/lib/types";
+import { useFirebase } from "@/firebase/provider";
 import {
   Card,
   CardContent,
@@ -14,7 +15,11 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { getStories } from "../actions";
+import { errorEmitter } from "@/firebase/error-emitter";
+import { FirestorePermissionError } from "@/firebase/errors";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+
 
 function formatTimestamp(timestamp: Timestamp | null) {
   if (!timestamp) return "Just now";
@@ -38,25 +43,35 @@ function formatTimestamp(timestamp: Timestamp | null) {
 export function StoryList() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
+  const [permissionError, setPermissionError] = useState(false);
   const { toast } = useToast();
-
+  const { db } = useFirebase();
 
   useEffect(() => {
-    async function fetchStories() {
-        const result = await getStories();
-        if (result.success && result.data) {
-            setStories(result.data);
-        } else {
-            toast({
-                variant: "destructive",
-                title: "Failed to load stories",
-                description: result.error || "Could not load stories."
-            });
-        }
+    const q = query(collection(db, "stories"), orderBy("createdAt", "desc"));
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const storiesData: Story[] = [];
+        querySnapshot.forEach((doc) => {
+          storiesData.push({ id: doc.id, ...doc.data() } as Story);
+        });
+        setStories(storiesData);
         setLoading(false);
-    }
-    fetchStories();
-  }, [toast]);
+        setPermissionError(false);
+      },
+      (error) => {
+        const permissionError = new FirestorePermissionError({
+          path: "stories",
+          operation: "list",
+        });
+        errorEmitter.emit("permission-error", permissionError);
+        setLoading(false);
+        setPermissionError(true);
+      }
+    );
+    return () => unsubscribe();
+  }, [db, toast]);
 
   if (loading) {
     return (
@@ -66,6 +81,18 @@ export function StoryList() {
         ))}
       </div>
     );
+  }
+  
+  if (permissionError) {
+    return (
+       <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Content Unavailable</AlertTitle>
+        <AlertDescription>
+          We're currently experiencing technical difficulties and cannot load stories. Our team has been notified. Please try again later.
+        </AlertDescription>
+      </Alert>
+    )
   }
 
   if (stories.length === 0) {
