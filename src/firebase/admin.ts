@@ -10,7 +10,7 @@ const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
 let app: admin.app.App;
 
 export async function initializeAdminApp() {
-  if (!app) {
+  if (!admin.apps.length) {
     if (!serviceAccount) {
       throw new Error(
         'Missing FIREBASE_SERVICE_ACCOUNT_KEY environment variable.'
@@ -26,7 +26,10 @@ export async function initializeAdminApp() {
       }
       app = admin.app(); // Get the default app if it already exists
     }
+  } else {
+    app = admin.app();
   }
+
 
   const auth = admin.auth(app);
   const db = admin.firestore(app);
