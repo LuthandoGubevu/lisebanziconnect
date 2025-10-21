@@ -127,7 +127,7 @@ export function StoryList() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6 pt-0">
-            <p className="line-clamp-3 whitespace-pre-wrap text-base text-gray-700 break-words">
+            <p className="line-clamp-3 text-base text-gray-700 break-words">
               {story.story}
             </p>
           </CardContent>
