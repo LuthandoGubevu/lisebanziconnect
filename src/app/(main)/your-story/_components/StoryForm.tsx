@@ -19,7 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { shareStory } from "../actions";
 import { PenSquare } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -29,6 +29,7 @@ const storySchema = z.object({
     .string()
     .min(50, "Story must be at least 50 characters long.")
     .max(5000, "Story must be less than 5000 characters."),
+  author: z.string().min(2, "Author name must be at least 2 characters."),
   isAnonymous: z.boolean().default(false),
 });
 
@@ -42,10 +43,18 @@ export function StoryForm() {
     defaultValues: {
       title: "",
       story: "",
+      author: "",
       isAnonymous: false,
     },
   });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  useEffect(() => {
+    if (user?.displayName) {
+      form.setValue("author", user.displayName);
+    }
+  }, [user, form]);
+
 
   async function onSubmit(values: StoryFormValues) {
     if (!user) {
@@ -58,7 +67,7 @@ export function StoryForm() {
     }
     setIsSubmitting(true);
 
-    const authorName = values.isAnonymous ? "Anonymous" : user.displayName || "Anonymous";
+    const authorName = values.isAnonymous ? "Anonymous" : values.author;
 
     const storyData = {
         title: values.title,
@@ -73,7 +82,12 @@ export function StoryForm() {
         title: "Thank you for sharing!",
         description: "Your story has been published.",
       });
-      form.reset({ title: "", story: "", isAnonymous: false });
+      form.reset({ 
+        title: "", 
+        story: "", 
+        isAnonymous: false,
+        author: user.displayName || ""
+      });
     } else {
       toast({
         variant: "destructive",
@@ -83,6 +97,8 @@ export function StoryForm() {
     }
     setIsSubmitting(false);
   }
+
+  const isAnonymous = form.watch("isAnonymous");
 
   return (
     <Card className="shadow-lg sticky top-20 bg-white/80 backdrop-blur-lg border-gray-200">
@@ -117,6 +133,24 @@ export function StoryForm() {
                       rows={8}
                       {...field}
                       className="bg-white/80 backdrop-blur-sm border-gray-300 shadow-inner"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="author"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Author Name</FormLabel>
+                  <FormControl>
+                    <Input 
+                        placeholder="Your display name" 
+                        {...field} 
+                        className="bg-white/80 backdrop-blur-sm border-gray-300 shadow-inner"
+                        disabled={isAnonymous}
                     />
                   </FormControl>
                   <FormMessage />
