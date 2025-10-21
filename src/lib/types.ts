@@ -3,14 +3,6 @@ import type { Timestamp } from 'firebase/firestore';
 import type { Timestamp as AdminTimestamp } from 'firebase-admin/firestore';
 
 
-export interface Question {
-  id: string;
-  name: string;
-  question: string;
-  answer: string;
-  createdAt: Timestamp | AdminTimestamp;
-}
-
 export interface Story {
   id: string;
   title: string;

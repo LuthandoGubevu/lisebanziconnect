@@ -43,7 +43,6 @@ import { useToast } from "@/hooks/use-toast";
 
 
 const navItems = [
-  { href: "/ask-a-mentor", label: "Ask a Mentor", icon: <HelpCircle className="size-5" /> },
   { href: "/support-circles", label: "Support Circles", icon: <HeartHandshake className="size-5" /> },
   { href: "/my-story", label: "My Story", icon: <BookUser className="size-5" /> },
   { href: "/community-stories", label: "Community Stories", icon: <Users className="size-5" /> },
@@ -79,7 +78,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
     <>
       <Sidebar side="left" collapsible="icon" variant="sidebar">
         <SidebarHeader className="flex items-center justify-between">
-            <Link href="/ask-a-mentor" className="flex items-center gap-2 font-bold text-xl">
+            <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl">
             <Siren className="size-6 text-blue-600" />
             <span className="group-data-[collapsible=icon]:hidden">Lisebanzi</span>
             </Link>

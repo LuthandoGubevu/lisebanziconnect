@@ -89,7 +89,7 @@ export function SignUpForm() {
       setDoc(userDocRef, userProfileData)
         .then(() => {
           toast({ title: "Account created successfully!" });
-          router.push("/ask-a-mentor");
+          router.push("/dashboard");
         })
         .catch(async (serverError: any) => {
            // Create the rich, contextual error.

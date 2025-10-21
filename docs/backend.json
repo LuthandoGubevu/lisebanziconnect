@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "UserProfile": {
@@ -46,30 +47,6 @@
         }
       },
       "required": ["uid", "firstName", "surname", "displayName", "email", "createdAt"]
-    },
-    "Question": {
-      "title": "Question",
-      "description": "A question submitted by a user to a mentor.",
-      "type": "object",
-      "properties": {
-        "userId": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "question": {
-          "type": "string"
-        },
-        "answer": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        }
-      },
-      "required": ["userId", "name", "question", "createdAt"]
     },
     "Story": {
       "title": "Story",
@@ -144,12 +121,6 @@
         "$ref": "#/entities/UserProfile"
       },
       "description": "Stores public profiles for users."
-    },
-    "/questions/{questionId}": {
-      "schema": {
-        "$ref": "#/entities/Question"
-      },
-      "description": "Stores questions submitted by users for mentors."
     },
     "/stories/{storyId}": {
       "schema": {
