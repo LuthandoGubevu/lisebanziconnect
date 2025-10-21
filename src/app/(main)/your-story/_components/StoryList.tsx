@@ -42,14 +42,6 @@ function formatTimestamp(timestamp: Timestamp | null | Date) {
   });
 }
 
-const mockStory: Story = {
-  id: "mock-story",
-  title: "The Journey to Healing",
-  author: "Jane Doe",
-  story: "This is a mock story to demonstrate how community stories will be displayed. It is a tale of resilience, hope, and the power of community. Finding this space has been a turning point in my journey. The support I'vereceived is immeasurable, and for the first time in a long time, I don't feel alone. Sharing my story is a big step, but I hope it can help someone else feel understood.",
-  createdAt: new Date() as any, // Using 'as any' to satisfy Timestamp type for this mock
-};
-
 export function StoryList() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
@@ -105,9 +97,7 @@ export function StoryList() {
     )
   }
 
-  const storiesToDisplay = stories.length === 0 && !permissionError ? [mockStory] : stories;
-
-  if (storiesToDisplay.length === 0) {
+  if (stories.length === 0) {
       return (
           <div className="text-center text-gray-500 italic py-10">
               No stories yet. Be the first to share your journey.
@@ -118,7 +108,7 @@ export function StoryList() {
 
   return (
     <div className="space-y-6">
-      {storiesToDisplay.map((story) => (
+      {stories.map((story) => (
         <Card key={story.id} className="shadow-md hover:shadow-lg transition-shadow duration-300 rounded-xl bg-white/80 backdrop-blur-lg border-gray-200">
           <CardHeader className="p-6">
             <CardTitle className="text-blue-600 text-xl">{story.title}</CardTitle>
