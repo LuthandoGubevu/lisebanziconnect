@@ -17,11 +17,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { shareStory } from "../actions";
 import { PenSquare } from "lucide-react";
 import React, { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Checkbox } from "@/components/ui/checkbox";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { useFirebase } from "@/firebase/provider";
+import { FirestorePermissionError } from "@/firebase/errors";
+import { errorEmitter } from "@/firebase/error-emitter";
 
 const storySchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters.").max(100),
@@ -38,6 +41,7 @@ type StoryFormValues = z.infer<typeof storySchema>;
 export function StoryForm() {
   const { toast } = useToast();
   const { user } = useAuth();
+  const { db } = useFirebase();
   const form = useForm<StoryFormValues>({
     resolver: zodResolver(storySchema),
     defaultValues: {
@@ -50,7 +54,7 @@ export function StoryForm() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   useEffect(() => {
-    if (user?.displayName) {
+    if (user?.displayName && !form.getValues("author")) {
       form.setValue("author", user.displayName);
     }
   }, [user, form]);
@@ -70,32 +74,42 @@ export function StoryForm() {
     const authorName = values.isAnonymous ? "Anonymous" : values.author;
 
     const storyData = {
+        userId: user.uid,
         title: values.title,
         story: values.story,
         author: authorName,
+        createdAt: serverTimestamp(),
     };
+    
+    const storiesCollectionRef = collection(db, "stories");
 
-    const result = await shareStory(storyData, user.uid);
-
-    if (result.success) {
-      toast({
-        title: "Thank you for sharing!",
-        description: "Your story has been published.",
-      });
-      form.reset({ 
-        title: "", 
-        story: "", 
-        isAnonymous: false,
-        author: user.displayName || ""
-      });
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Oops! Something went wrong.",
-        description: result.error || "Could not publish your story.",
-      });
+    try {
+        await addDoc(storiesCollectionRef, storyData);
+        toast({
+            title: "Thank you for sharing!",
+            description: "Your story has been published.",
+        });
+        form.reset({ 
+            title: "", 
+            story: "", 
+            isAnonymous: false,
+            author: user.displayName || ""
+        });
+    } catch (error) {
+        const permissionError = new FirestorePermissionError({
+            path: storiesCollectionRef.path,
+            operation: 'create',
+            requestResourceData: storyData
+         });
+         errorEmitter.emit('permission-error', permissionError);
+         toast({
+            variant: "destructive",
+            title: "Failed to publish story",
+            description: "You do not have permission to publish a story.",
+        });
+    } finally {
+        setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   }
 
   const isAnonymous = form.watch("isAnonymous");
