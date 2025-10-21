@@ -16,9 +16,10 @@ import {
   MessageSquareQuote,
   PanelLeft,
   Siren,
+  LogOut,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { Header } from "./Header";
 import { useAuth } from "@/hooks/useAuth";
@@ -33,8 +34,12 @@ import {
   SidebarHeader,
   SidebarTrigger,
   useSidebar,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 import { DistressCallButton } from "./DistressCallButton";
+import { useFirebase } from "@/firebase/provider";
+import { signOut } from "firebase/auth";
+import { useToast } from "@/hooks/use-toast";
 
 
 const navItems = [
@@ -52,6 +57,23 @@ const navItems = [
 function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
+  const { auth } = useFirebase();
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      toast({ title: "Signed out successfully." });
+      router.push("/");
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to sign out.",
+        description: "An error occurred while signing out. Please try again.",
+      });
+    }
+  };
   
   return (
     <>
@@ -74,8 +96,9 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
                         isActive={isActive}
                         tooltip={{ children: item.label }}
                         className="justify-start"
+                        onClick={() => { if (isMobile) setOpenMobile(false)}}
                     >
-                        <Link href={item.href} onClick={() => { if (isMobile) setOpenMobile(false)}}>
+                        <Link href={item.href}>
                           {item.icon}
                           <span>{item.label}</span>
                         </Link>
@@ -85,6 +108,16 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
                 })}
             </SidebarMenu>
         </SidebarContent>
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={handleSignOut} tooltip={{ children: "Log Out" }} className="justify-start">
+                <LogOut className="size-5" />
+                <span>Log Out</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
       </Sidebar>
 
       <SidebarInset>
