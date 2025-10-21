@@ -1,39 +1,28 @@
 /**
  * @file Firestore Security Rules
- * @description This ruleset defines the access control for the Firestore database,
- *              allowing users to read public content while restricting write access
- *              based on ownership and authentication.
+ * @description This ruleset implements a combination of user-based ownership and public read access to facilitate a social and supportive platform.
  *
  * Core Philosophy:
- *   - Emphasizes user-based ownership for write operations.
- *   - Allows public read access to certain collections.
- *   - Uses simple checks based on authenticated user IDs.
+ *  - Users have full control over their own profiles and shared stories.
+ *  - Public content (stories, support messages, events) is readable by everyone but writable only by authenticated users with the appropriate permissions.
  *
  * Data Structure:
- *   - /users/{userId}: Stores public user profiles. Write access is limited to the
- *     authenticated user with a matching userId.
- *   - /questions/{questionId}: Stores questions submitted by users.
- *     Write access is limited to authenticated users.
- *   - /stories/{storyId}: Stores inspirational stories shared by users.
- *     Write access is limited to authenticated users.
- *   - /support_circle_messages/{messageId}: Stores public support chat messages.
- *     Write access is allowed for all authenticated users.
- *   - /events/{eventId}: Stores upcoming community events.
- *     Write access is not defined, defaulting to unauthorized.
+ *  - User profiles are stored under `/users/{userId}` and are private to the user.
+ *  - Stories are stored under `/stories/{storyId}` and are publicly readable but owner-writable.
+ *  - Support circle messages are stored under `/support_circle_messages/{messageId}` and are publicly readable but owner-writable.
+ *  - Events are stored under `/events/{eventId}` and are publicly readable but writable by application admins (currently not implemented).
  *
  * Key Security Decisions:
- *   - Users can only create/modify their own profiles.
- *   - Read operations are generally public.
- *   - The rules do not enforce any complex data validation, focusing on
- *     authorization.
+ *  - Listing of user profiles is disallowed to prevent scraping.
+ *  - Stories are publicly listable.
+ *  - The 'userId' field is used to enforce ownership for stories.
+ *  - Data validation is minimized in this prototyping phase to allow flexible schema changes. Only authorization-critical fields are validated.
  *
  * Denormalization for Authorization:
- *   - The rules use the `userId` field in documents to enforce ownership, avoiding
- *     the need for additional `get()` calls.
+ *  - Stories contain a `userId` field, enabling direct ownership checks without additional reads.
  *
  * Structural Segregation:
- *   - Data intended to be private (e.g., private user data) is stored separately
- *     from public data (e.g., stories, support messages).
+ *  - Public content (stories) and private content (user profiles) are stored in separate top-level collections to optimize read performance and security.
  */
 rules_version = '2';
 service cloud.firestore {
@@ -42,79 +31,134 @@ service cloud.firestore {
     /**
      * @description Controls access to user profile documents.
      * @path /users/{userId}
-     * @allow (create) User with uid 'user_abc' can create their profile with matching uid.
-     *   request.auth.uid == 'user_abc' && request.resource.data.uid == 'user_abc'
-     * @allow (get, list) Any user can read any profile.
-     * @allow (update) User with uid 'user_abc' can update their profile with matching uid.
-     *   request.auth.uid == 'user_abc' && resource.data.uid == 'user_abc'
-     * @allow (delete) User with uid 'user_abc' can delete their profile with matching uid.
-     *   request.auth.uid == 'user_abc' && resource.data.uid == 'user_abc'
-     * @deny (create) User with uid 'user_xyz' cannot create a profile for 'user_abc'.
-     *   request.auth.uid == 'user_xyz' && request.resource.data.uid == 'user_abc'
-     * @deny (update) User with uid 'user_xyz' cannot update profile of 'user_abc'.
-     *   request.auth.uid == 'user_xyz' && resource.data.uid == 'user_abc'
-     * @deny (delete) User with uid 'user_xyz' cannot delete the profile of 'user_abc'.
-     *   request.auth.uid == 'user_xyz' && resource.data.uid == 'user_abc'
-     * @principle Enforces document ownership for writes and allows public reads.
+     * @allow (create) User with UID 'user_abc' can create their own profile.
+     * @allow (get) User with UID 'user_abc' can read their own profile.
+     * @allow (update) User with UID 'user_abc' can update their own profile.
+     * @allow (delete) User with UID 'user_abc' can delete their own profile.
+     * @deny (create) User with UID 'user_xyz' cannot create a profile with ID 'user_abc'.
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if isSignedIn() && request.auth.uid == userId && request.resource.data.uid == userId;
-      allow update: if isSignedIn() && request.auth.uid == userId && isExistingOwner(userId) && request.resource.data.uid == resource.data.uid;
-      allow delete: if isSignedIn() && request.auth.uid == userId && isExistingOwner(userId);
+      // Check if the user is signed in
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      // Check if the requesting user is the owner of the document
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      // Check if the user is signed in and is the owner of the document
+      function isExistingOwner(userId) {
+        return isSignedIn() && isOwner(userId) && resource != null;
+      }
+      allow get: if isOwner(userId);
+      allow list: if false; // Prevent listing of all users
+
+      allow create: if isOwner(userId)
+                   && request.resource.data.uid == request.auth.uid;
+
+      allow update: if isExistingOwner(userId)
+                   && request.resource.data.uid == resource.data.uid; // Enforce immutability of uid
+
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
      * @description Controls access to questions submitted by users.
      * @path /questions/{questionId}
-     * @allow (create) Authenticated user can create a question.
-     *   request.auth.uid != null
-     * @allow (get, list) Any user can read any question.
-     * @deny (update) No one can update a question
-     * @deny (delete) No one can delete a question
-     * @principle Allows public reads and restricts writes to authenticated users.
+     * @allow (create) User with UID 'user_abc' can create a question with their ID.
+     * @allow (get) Any user can read a question.
+     * @allow (update) User with UID 'user_abc' can update a question they own.
+     * @allow (delete) User with UID 'user_abc' can delete a question they own.
+     * @deny (create) User with UID 'user_xyz' cannot create a question with userId 'user_abc'.
+     * @principle Enforces document ownership for writes, public read access.
      */
     match /questions/{questionId} {
+      // Check if the user is signed in
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      // Check if the requesting user is the owner of the document
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      // Check if the user is signed in and is the owner of the document
+      function isExistingOwner(userId) {
+        return isSignedIn() && isOwner(userId) && resource != null;
+      }
+
       allow get: if true;
       allow list: if true;
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow update: if false;
-      allow delete: if false;
+
+      allow create: if isSignedIn()
+                   && request.resource.data.userId == request.auth.uid;
+
+      allow update: if isExistingOwner(resource.data.userId)
+                   && request.resource.data.userId == resource.data.userId;
+
+      allow delete: if isExistingOwner(resource.data.userId);
     }
 
     /**
      * @description Controls access to inspirational stories shared by users.
      * @path /stories/{storyId}
-     * @allow (create) Authenticated user can create a story.
-     *   request.auth.uid != null
-     * @allow (get, list) Any user can read any story.
-     * @deny (update) No one can update a story
-     * @deny (delete) No one can delete a story
-     * @principle Allows public reads and restricts writes to authenticated users.
+     * @allow (create) User with UID 'user_abc' can create a story with their ID.
+     * @allow (get) Any user can read a story.
+     * @allow (update) User with UID 'user_abc' can update a story they own.
+     * @allow (delete) User with UID 'user_abc' can delete a story they own.
+     * @deny (create) User with UID 'user_xyz' cannot create a story with userId 'user_abc'.
+     * @principle Enforces document ownership for writes, public read access.
      */
     match /stories/{storyId} {
+      // Check if the user is signed in
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      // Check if the requesting user is the owner of the document
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      // Check if the user is signed in and is the owner of the document
+      function isExistingOwner(userId) {
+        return isSignedIn() && isOwner(userId) && resource != null;
+      }
+
       allow get: if true;
       allow list: if true;
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow update: if false;
-      allow delete: if false;
+
+      allow create: if isSignedIn()
+                   && request.resource.data.userId == request.auth.uid;
+
+      allow update: if isExistingOwner(resource.data.userId)
+                   && request.resource.data.userId == resource.data.userId;
+
+      allow delete: if isExistingOwner(resource.data.userId);
     }
 
     /**
      * @description Controls access to messages in the public support circle chat.
      * @path /support_circle_messages/{messageId}
-     * @allow (create) Authenticated user can create a message.
-     *   request.auth.uid != null
-     * @allow (get, list) Any user can read any message.
-     * @deny (update) No one can update a message
-     * @deny (delete) No one can delete a message
-     * @principle Allows public reads and restricts writes to authenticated users.
+     * @allow (create) Any signed-in user can create a message.
+     * @allow (get) Any user can read a message.
+     * @deny (update) No one can update a message.
+     *
+     * @principle Public read access, owner-only create, no updates or deletes.
      */
     match /support_circle_messages/{messageId} {
+      // Check if the user is signed in
+      function isSignedIn() {
+        return request.auth != null;
+      }
       allow get: if true;
       allow list: if true;
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+                   && request.resource.data.userId == request.auth.uid;
       allow update: if false;
       allow delete: if false;
     }
@@ -122,10 +166,11 @@ service cloud.firestore {
     /**
      * @description Controls access to upcoming community events.
      * @path /events/{eventId}
-     * @allow (get, list) Any user can read any event.
-     * @deny (create) No one can create an event
-     * @deny (update) No one can update an event
-     * @deny (delete) No one can delete an event
+     * @allow (get) Any user can read event details.
+     * @deny (create) No users can create events (admin-only).
+     * @deny (update) No users can update events (admin-only).
+     *
+     * @principle Public read access, admin-only writes (not yet implemented).
      */
     match /events/{eventId} {
       allow get: if true;
@@ -134,15 +179,5 @@ service cloud.firestore {
       allow update: if false;
       allow delete: if false;
     }
-  }
-
-  // Helper function to determine if the user is signed in
-  function isSignedIn() {
-    return request.auth != null;
-  }
-
-    // Helper function to determine if the user is the owner of the resource, and the resource exists
-  function isExistingOwner(userId) {
-    return isSignedIn() && request.auth.uid == userId && resource != null;
   }
 }
