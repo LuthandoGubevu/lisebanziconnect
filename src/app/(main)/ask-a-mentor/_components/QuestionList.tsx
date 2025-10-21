@@ -2,7 +2,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Timestamp } from "firebase/firestore";
+import {
+  collection,
+  query,
+  orderBy,
+  onSnapshot,
+  Timestamp,
+} from "firebase/firestore";
 import type { Question } from "@/lib/types";
 import {
   Accordion,
@@ -13,12 +19,9 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Bot } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getQuestions } from "../actions";
-
-// This type needs to be adjusted because the server action serializes Timestamps
-type SerializableQuestion = Omit<Question, 'createdAt'> & {
-  createdAt: string; 
-};
+import { useFirebase } from "@/firebase/provider";
+import { errorEmitter } from "@/firebase/error-emitter";
+import { FirestorePermissionError } from "@/firebase/errors";
 
 
 function formatTimestamp(timestamp: Timestamp | string | null) {
@@ -30,28 +33,37 @@ function formatTimestamp(timestamp: Timestamp | string | null) {
 }
 
 export function QuestionList() {
-  const [questions, setQuestions] = useState<SerializableQuestion[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { db } = useFirebase();
 
 
   useEffect(() => {
-    async function fetchQuestions() {
-      const result = await getQuestions();
-      if (Array.isArray(result)) {
-        setQuestions(result);
-      } else {
+    const q = query(collection(db, "questions"), orderBy("createdAt", "desc"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const newQuestions: Question[] = [];
+      querySnapshot.forEach((doc) => {
+        newQuestions.push({ id: doc.id, ...doc.data() } as Question);
+      });
+      setQuestions(newQuestions);
+      setLoading(false);
+    }, (error) => {
+        const permissionError = new FirestorePermissionError({
+          path: "questions",
+          operation: 'list',
+        });
+        errorEmitter.emit('permission-error', permissionError);
         toast({
           variant: "destructive",
           title: "Failed to load questions",
-          description: result.error || "An unknown error occurred.",
-        });
-      }
-      setLoading(false);
-    }
+          description: "Could not load chat history. Please check your connection or permissions."
+        })
+        setLoading(false);
+    });
 
-    fetchQuestions();
-  }, [toast]);
+    return () => unsubscribe();
+  }, [db, toast]);
 
   if (loading) {
     return (
