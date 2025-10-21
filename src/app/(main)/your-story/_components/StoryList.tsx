@@ -19,13 +19,14 @@ import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { seedStory } from "../actions";
 
 
-function formatTimestamp(timestamp: Timestamp | null) {
+function formatTimestamp(timestamp: Timestamp | null | Date) {
   if (!timestamp) return "Just now";
   let date: Date;
-  if (typeof timestamp === 'string') {
+  if (timestamp instanceof Date) {
+    date = timestamp;
+  } else if (typeof timestamp === 'string') {
     date = new Date(timestamp);
   } else if (timestamp && 'seconds' in timestamp) {
     date = (timestamp as Timestamp).toDate();
@@ -40,6 +41,14 @@ function formatTimestamp(timestamp: Timestamp | null) {
     year: "numeric",
   });
 }
+
+const mockStory: Story = {
+  id: "mock-story",
+  title: "The Journey to Healing",
+  author: "Jane Doe",
+  story: "This is a mock story to demonstrate how community stories will be displayed. It is a tale of resilience, hope, and the power of community. Finding this space has been a turning point in my journey. The support I've received is immeasurable, and for the first time in a long time, I don't feel alone. Sharing my story is a big step, but I hope it can help someone else feel understood.",
+  createdAt: new Date() as any, // Using 'as any' to satisfy Timestamp type for this mock
+};
 
 export function StoryList() {
   const [stories, setStories] = useState<Story[]>([]);
@@ -57,13 +66,7 @@ export function StoryList() {
         querySnapshot.forEach((doc) => {
           storiesData.push({ id: doc.id, ...doc.data() } as Story);
         });
-
-        if (storiesData.length === 0) {
-          seedStory();
-        } else {
-          setStories(storiesData);
-        }
-
+        setStories(storiesData);
         setLoading(false);
         setPermissionError(false);
       },
@@ -102,22 +105,11 @@ export function StoryList() {
     )
   }
 
-  if (stories.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-64 border-gray-300">
-        <h3 className="text-xl font-semibold text-gray-500">
-          No Stories Yet
-        </h3>
-        <p className="text-gray-500">
-          Be the first one to share an inspirational story!
-        </p>
-      </div>
-    );
-  }
+  const storiesToDisplay = stories.length === 0 ? [mockStory] : stories;
 
   return (
     <div className="space-y-6">
-      {stories.map((story) => (
+      {storiesToDisplay.map((story) => (
         <Card key={story.id} className="shadow-lg bg-white/80 backdrop-blur-lg border-gray-200">
           <CardHeader>
             <CardTitle className="text-blue-600">{story.title}</CardTitle>
