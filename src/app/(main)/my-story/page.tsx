@@ -10,12 +10,12 @@ export default function MyStoryPage() {
         title="My Story"
         description="Your private space to document your journey. You control who sees it."
       />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-1">
+      <div className="flex flex-col gap-8">
+        <div>
            <StoryForm />
         </div>
-        <div className="md:col-span-2">
-            <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-full border-gray-300">
+        <div>
+            <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-full border-gray-300 bg-white/80">
                 <h3 className="text-xl font-semibold text-gray-500">
                     Your Submitted Stories
                 </h3>
