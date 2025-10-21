@@ -19,6 +19,7 @@ import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { seedStory } from "../actions";
 
 
 function formatTimestamp(timestamp: Timestamp | null) {
@@ -56,7 +57,13 @@ export function StoryList() {
         querySnapshot.forEach((doc) => {
           storiesData.push({ id: doc.id, ...doc.data() } as Story);
         });
-        setStories(storiesData);
+
+        if (storiesData.length === 0) {
+          seedStory();
+        } else {
+          setStories(storiesData);
+        }
+
         setLoading(false);
         setPermissionError(false);
       },
