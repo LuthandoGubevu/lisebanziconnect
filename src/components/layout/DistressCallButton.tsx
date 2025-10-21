@@ -40,7 +40,7 @@ export function DistressCallButton() {
             <SidebarMenuButton
               variant="destructive"
               className="justify-start bg-red-600/15 text-red-600 hover:bg-red-600/25 hover:text-red-700"
-              tooltip={{ children: "Distress Call" }}
+              tooltip={{ children: "Distress Call", side: "left" }}
             >
                 <Siren className="size-5" />
                 <span className="group-data-[collapsible=icon]:hidden">Distress Call</span>

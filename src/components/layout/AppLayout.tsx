@@ -76,7 +76,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
   
   return (
     <>
-      <Sidebar side="left" collapsible="icon" variant="sidebar">
+      <Sidebar side="right" collapsible="icon" variant="sidebar">
         <SidebarHeader className="flex items-center justify-between">
             <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl">
             <Siren className="size-6 text-blue-600" />
@@ -93,7 +93,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
                     <SidebarMenuButton
                         asChild
                         isActive={isActive}
-                        tooltip={{ children: item.label }}
+                        tooltip={{ children: item.label, side: "left" }}
                         className="justify-start"
                         onClick={() => { if (isMobile) setOpenMobile(false)}}
                     >
@@ -111,7 +111,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
           <SidebarMenu>
             <DistressCallButton />
             <SidebarMenuItem>
-              <SidebarMenuButton onClick={handleSignOut} tooltip={{ children: "Log Out" }} className="justify-start">
+              <SidebarMenuButton onClick={handleSignOut} tooltip={{ children: "Log Out", side: "left" }} className="justify-start">
                 <LogOut className="size-5" />
                 <span className="group-data-[collapsible=icon]:hidden">Log Out</span>
               </SidebarMenuButton>
