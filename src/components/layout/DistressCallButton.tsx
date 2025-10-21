@@ -27,40 +27,9 @@ export function DistressCallButton() {
   const { db } = useFirebase();
 
   const handleDistressCall = async () => {
-    if (!user) {
-      toast({
-        variant: 'destructive',
-        title: 'Authentication Error',
-        description: 'You must be logged in to send a distress call.',
-      });
-      return;
-    }
-
-    const distressData = {
-      userId: user.uid,
-      timestamp: serverTimestamp(),
-      location: 'Mock Location', // In a real app, you'd get this with user permission
-    };
-
-    const distressCollectionRef = collection(db, 'distressCalls');
-
-    addDoc(distressCollectionRef, distressData).then(() => {
-       toast({
-        title: 'Distress Signal Sent',
-        description: 'Help is on the way. A support member has been notified.',
-      });
-    }).catch((error) => {
-        const permissionError = new FirestorePermissionError({
-          path: distressCollectionRef.path,
-          operation: 'create',
-          requestResourceData: distressData,
-        });
-        errorEmitter.emit('permission-error', permissionError);
-         toast({
-            variant: 'destructive',
-            title: 'Failed to Send Signal',
-            description: 'Could not send distress signal. Please try again.',
-        });
+    toast({
+      title: 'Feature Coming Soon',
+      description: 'This feature is not yet configured. You will be notified when it is available.',
     });
   };
 
@@ -82,7 +51,7 @@ export function DistressCallButton() {
         <AlertDialogHeader>
           <AlertDialogTitle>Confirm Distress Call</AlertDialogTitle>
           <AlertDialogDescription>
-            This will immediately notify our support team that you are in need of
+            This feature is intended to notify our support team that you are in need of
             urgent assistance. Are you sure you want to proceed?
           </AlertDialogDescription>
         </AlertDialogHeader>
