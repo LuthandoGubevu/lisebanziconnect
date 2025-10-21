@@ -2,8 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
-import { useFirebase } from "@/firebase/provider";
+import { Timestamp } from "firebase/firestore";
 import type { Question } from "@/lib/types";
 import {
   Accordion,
@@ -12,50 +11,47 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Bot, User } from "lucide-react";
+import { Bot } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { errorEmitter } from "@/firebase/error-emitter";
-import { FirestorePermissionError } from "@/firebase/errors";
+import { getQuestions } from "../actions";
 
-function formatTimestamp(timestamp: Timestamp | null) {
+// This type needs to be adjusted because the server action serializes Timestamps
+type SerializableQuestion = Omit<Question, 'createdAt'> & {
+  createdAt: string; 
+};
+
+
+function formatTimestamp(timestamp: Timestamp | string | null) {
   if (!timestamp) return "Just now";
-  return new Date(timestamp.seconds * 1000).toLocaleDateString("en-US", {
+  const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp.toDate();
+  return date.toLocaleDateString("en-US", {
     month: 'short', day: 'numeric', year: 'numeric'
   });
 }
 
 export function QuestionList() {
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<SerializableQuestion[]>([]);
   const [loading, setLoading] = useState(true);
-  const { db } = useFirebase();
   const { toast } = useToast();
 
 
   useEffect(() => {
-    const q = query(collection(db, "questions"), orderBy("createdAt", "desc"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const questionsData: Question[] = [];
-      querySnapshot.forEach((doc) => {
-        questionsData.push({ id: doc.id, ...doc.data() } as Question);
-      });
-      setQuestions(questionsData);
+    async function fetchQuestions() {
+      const result = await getQuestions();
+      if (Array.isArray(result)) {
+        setQuestions(result);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Failed to load questions",
+          description: result.error || "An unknown error occurred.",
+        });
+      }
       setLoading(false);
-    }, (error) => {
-      const permissionError = new FirestorePermissionError({
-        path: "questions",
-        operation: 'list',
-      });
-      errorEmitter.emit('permission-error', permissionError);
-      toast({
-        variant: "destructive",
-        title: "Permission Denied",
-        description: "You don't have permission to view questions."
-      })
-      setLoading(false);
-    });
+    }
 
-    return () => unsubscribe();
-  }, [db, toast]);
+    fetchQuestions();
+  }, [toast]);
 
   if (loading) {
     return (
