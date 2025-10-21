@@ -8,14 +8,14 @@ import { revalidatePath } from "next/cache";
 
 const StorySchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters.").max(100),
-  author: z.string().optional(),
+  author: z.string(),
   story: z
     .string()
     .min(50, "Story must be at least 50 characters long.")
     .max(5000, "Story must be less than 5000 characters."),
 });
 
-export async function shareStory(values: z.infer<typeof StorySchema>, userId: string, userDisplayName: string | null) {
+export async function shareStory(values: z.infer<typeof StorySchema>, userId: string) {
   const { app } = await initializeAdminApp();
   const db = getFirestore(app);
 
@@ -36,7 +36,7 @@ export async function shareStory(values: z.infer<typeof StorySchema>, userId: st
     await db.collection("stories").add({
       userId: userId,
       title: validatedFields.data.title,
-      author: validatedFields.data.author || userDisplayName || "Anonymous",
+      author: validatedFields.data.author,
       story: validatedFields.data.story,
       createdAt: new Date(),
     });

@@ -21,14 +21,15 @@ import { shareStory } from "../actions";
 import { PenSquare } from "lucide-react";
 import React from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const storySchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters.").max(100),
-  author: z.string().optional(),
   story: z
     .string()
     .min(50, "Story must be at least 50 characters long.")
     .max(5000, "Story must be less than 5000 characters."),
+  isAnonymous: z.boolean().default(false),
 });
 
 type StoryFormValues = z.infer<typeof storySchema>;
@@ -40,18 +41,11 @@ export function StoryForm() {
     resolver: zodResolver(storySchema),
     defaultValues: {
       title: "",
-      author: "",
       story: "",
+      isAnonymous: false,
     },
   });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-
-  React.useEffect(() => {
-    if (user?.displayName) {
-      form.setValue("author", user.displayName);
-    }
-  }, [user, form]);
-
 
   async function onSubmit(values: StoryFormValues) {
     if (!user) {
@@ -63,14 +57,23 @@ export function StoryForm() {
       return;
     }
     setIsSubmitting(true);
-    const result = await shareStory(values, user.uid, user.displayName);
+
+    const authorName = values.isAnonymous ? "Anonymous" : user.displayName || "Anonymous";
+
+    const storyData = {
+        title: values.title,
+        story: values.story,
+        author: authorName,
+    };
+
+    const result = await shareStory(storyData, user.uid);
 
     if (result.success) {
       toast({
         title: "Thank you for sharing!",
         description: "Your story has been published.",
       });
-      form.reset({ title: "", story: "", author: user.displayName || "" });
+      form.reset({ title: "", story: "", isAnonymous: false });
     } else {
       toast({
         variant: "destructive",
@@ -102,19 +105,6 @@ export function StoryForm() {
                 </FormItem>
               )}
             />
-             <FormField
-              control={form.control}
-              name="author"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Your Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Anonymous" {...field} className="bg-white/80 backdrop-blur-sm border-gray-300 shadow-inner" disabled={!!user?.displayName} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="story"
@@ -130,6 +120,25 @@ export function StoryForm() {
                     />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="isAnonymous"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm bg-white/50">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>
+                      Post anonymously
+                    </FormLabel>
+                  </div>
                 </FormItem>
               )}
             />
