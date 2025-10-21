@@ -46,7 +46,7 @@ const mockStory: Story = {
   id: "mock-story",
   title: "The Journey to Healing",
   author: "Jane Doe",
-  story: "This is a mock story to demonstrate how community stories will be displayed. It is a tale of resilience, hope, and the power of community. Finding this space has been a turning point in my journey. The support I've received is immeasurable, and for the first time in a long time, I don't feel alone. Sharing my story is a big step, but I hope it can help someone else feel understood.",
+  story: "This is a mock story to demonstrate how community stories will be displayed. It is a tale of resilience, hope, and the power of community. Finding this space has been a turning point in my journey. The support I'vereceived is immeasurable, and for the first time in a long time, I don't feel alone. Sharing my story is a big step, but I hope it can help someone else feel understood.",
   createdAt: new Date() as any, // Using 'as any' to satisfy Timestamp type for this mock
 };
 
@@ -127,7 +127,7 @@ export function StoryList() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6 pt-0">
-            <p className="line-clamp-3 whitespace-pre-wrap text-base text-gray-700">
+            <p className="line-clamp-3 whitespace-pre-wrap text-base text-gray-700 break-words">
               {story.story}
             </p>
           </CardContent>
