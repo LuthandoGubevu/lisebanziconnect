@@ -5,26 +5,17 @@ import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  collection,
-  query,
-  orderBy,
-  onSnapshot,
-  limit,
-} from "firebase/firestore";
 import { useFirebase } from "@/firebase/provider";
 import type { Message } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { sendMessage } from "../actions";
+import { sendMessage, getMessages } from "../actions";
 import { Send } from "lucide-react";
 import { MessageBubble } from "./MessageBubble";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
-import { errorEmitter } from "@/firebase/error-emitter";
-import { FirestorePermissionError } from "@/firebase/errors";
 
 const messageSchema = z.object({
   text: z.string().min(1).max(500),
@@ -38,7 +29,6 @@ export function ChatRoom() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { db } = useFirebase();
   const { user } = useAuth();
   
   const form = useForm<MessageFormValues>({
@@ -54,34 +44,26 @@ export function ChatRoom() {
   }, [user, form]);
 
   useEffect(() => {
-    const q = query(
-      collection(db, "support_circle_messages"),
-      orderBy("createdAt", "asc"),
-      limit(50)
-    );
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const msgs: Message[] = [];
-      querySnapshot.forEach((doc) => {
-        msgs.push({ id: doc.id, ...doc.data() } as Message);
-      });
-      setMessages(msgs);
-      setLoading(false);
-    }, (error) => {
-        const permissionError = new FirestorePermissionError({
-          path: "support_circle_messages",
-          operation: 'list',
-        });
-        errorEmitter.emit('permission-error', permissionError);
-        toast({
-            variant: "destructive",
-            title: "Error fetching messages",
-            description: "Could not load chat history. Please check your connection or permissions."
-        })
+    async function fetchMessages() {
+        const result = await getMessages();
+        if(result.success && result.data) {
+            setMessages(result.data);
+        } else {
+            toast({
+                variant: "destructive",
+                title: "Error fetching messages",
+                description: result.error || "Could not load chat history."
+            })
+        }
         setLoading(false);
-    });
+    }
+    fetchMessages();
+    
+    // Poll for new messages every 5 seconds
+    const interval = setInterval(fetchMessages, 5000);
+    return () => clearInterval(interval);
 
-    return () => unsubscribe();
-  }, [db, toast]);
+  }, [toast]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -99,6 +81,10 @@ export function ChatRoom() {
     const result = await sendMessage(values, user.uid, user.displayName);
     if (result.success) {
       form.reset({text: "", sender: values.sender}); 
+      // Manually add message to state for instant feedback
+      if(result.newMessage) {
+        setMessages(prev => [...prev, result.newMessage as Message]);
+      }
     } else {
       toast({
         variant: "destructive",

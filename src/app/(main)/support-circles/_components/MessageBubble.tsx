@@ -6,9 +6,17 @@ type MessageBubbleProps = {
   message: Message;
 };
 
-function formatTimestamp(timestamp: Timestamp | null) {
+function formatTimestamp(timestamp: Timestamp | any | null) {
     if (!timestamp) return "";
-    return new Date(timestamp.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    let date;
+    if (timestamp instanceof Timestamp) {
+        date = timestamp.toDate();
+    } else if (timestamp._seconds) { // Handle admin timestamp
+        date = new Date(timestamp._seconds * 1000);
+    } else {
+        date = new Date(timestamp);
+    }
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
 

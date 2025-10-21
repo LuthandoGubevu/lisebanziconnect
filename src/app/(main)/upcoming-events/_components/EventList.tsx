@@ -2,14 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  collection,
-  query,
-  orderBy,
-  onSnapshot,
-  Timestamp,
-} from "firebase/firestore";
-import { useFirebase } from "@/firebase/provider";
+import { Timestamp } from "firebase/firestore";
 import type { Event } from "@/lib/types";
 import {
   Card,
@@ -21,12 +14,21 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { errorEmitter } from "@/firebase/error-emitter";
-import { FirestorePermissionError } from "@/firebase/errors";
+import { getEvents, addEvent } from "../actions";
 
 function formatTimestamp(timestamp: Timestamp | null) {
   if (!timestamp) return "Date TBD";
-  return new Date(timestamp.seconds * 1000).toLocaleDateString("en-US", {
+  let date: Date;
+  if (typeof timestamp === 'string') {
+    date = new Date(timestamp);
+  } else if (timestamp && 'seconds' in timestamp) {
+    date = (timestamp as Timestamp).toDate();
+  } else if (timestamp && '_seconds' in timestamp) {
+    date = new Date((timestamp as any)._seconds * 1000);
+  } else {
+    return "Invalid date";
+  }
+  return date.toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -37,53 +39,34 @@ function formatTimestamp(timestamp: Timestamp | null) {
 export function EventList() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-  const { db } = useFirebase();
   const { toast } = useToast();
 
-
   useEffect(() => {
-    // Seed with one event if collection is empty
-    addInitialEvent();
-
-    const q = query(collection(db, "events"), orderBy("date", "asc"));
-    const unsubscribe = onSnapshot(
-      q,
-      (querySnapshot) => {
-        const eventsData: Event[] = [];
-        querySnapshot.forEach((doc) => {
-          eventsData.push({ id: doc.id, ...doc.data() } as Event);
-        });
-        setEvents(eventsData);
+    async function fetchEvents() {
+        const result = await getEvents();
+        if(result.success && result.data) {
+            if (result.data.length === 0) {
+                // If no events, seed one.
+                await addEvent();
+                const newResult = await getEvents();
+                if (newResult.success && newResult.data) {
+                    setEvents(newResult.data);
+                }
+            } else {
+                setEvents(result.data);
+            }
+        } else {
+             toast({
+                variant: "destructive",
+                title: "Failed to load events",
+                description: result.error || "Could not load events."
+            });
+        }
         setLoading(false);
-      },
-      (error) => {
-        const permissionError = new FirestorePermissionError({
-          path: "events",
-          operation: 'list',
-        });
-        errorEmitter.emit('permission-error', permissionError);
-        toast({
-          variant: "destructive",
-          title: "Permission Denied",
-          description: "You don't have permission to view events."
-        });
-        setLoading(false);
-      }
-    );
+    }
+    fetchEvents();
+  }, [toast]);
 
-    return () => unsubscribe();
-  }, [db, toast]);
-
-  const addInitialEvent = async () => {
-    const q = query(collection(db, "events"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      if (snapshot.empty) {
-        const { addEvent } = require('../actions');
-        addEvent();
-      }
-      unsubscribe();
-    });
-  };
 
   if (loading) {
     return (

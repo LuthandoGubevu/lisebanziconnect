@@ -2,13 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  collection,
-  query,
-  orderBy,
-  onSnapshot,
-  Timestamp,
-} from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import type { Question } from "@/lib/types";
 import {
   Accordion,
@@ -19,51 +13,50 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Bot } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useFirebase } from "@/firebase/provider";
-import { errorEmitter } from "@/firebase/error-emitter";
-import { FirestorePermissionError } from "@/firebase/errors";
-
+import { getQuestions } from "../actions";
 
 function formatTimestamp(timestamp: Timestamp | string | null) {
   if (!timestamp) return "Just now";
-  const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp.toDate();
+  let date: Date;
+  if (typeof timestamp === 'string') {
+    date = new Date(timestamp);
+  } else if (timestamp && 'seconds' in timestamp) {
+    // It's a Firestore Timestamp
+    date = (timestamp as Timestamp).toDate();
+  } else if (timestamp && '_seconds' in timestamp) {
+    // It's a Firebase Admin Timestamp
+    date = new Date((timestamp as any)._seconds * 1000);
+  } else {
+    return "Invalid date";
+  }
   return date.toLocaleDateString("en-US", {
     month: 'short', day: 'numeric', year: 'numeric'
   });
 }
 
+
 export function QuestionList() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const { db } = useFirebase();
-
 
   useEffect(() => {
-    const q = query(collection(db, "questions"), orderBy("createdAt", "desc"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const newQuestions: Question[] = [];
-      querySnapshot.forEach((doc) => {
-        newQuestions.push({ id: doc.id, ...doc.data() } as Question);
-      });
-      setQuestions(newQuestions);
-      setLoading(false);
-    }, (error) => {
-        const permissionError = new FirestorePermissionError({
-          path: "questions",
-          operation: 'list',
-        });
-        errorEmitter.emit('permission-error', permissionError);
+    async function fetchQuestions() {
+      const result = await getQuestions();
+      if (result.success && result.data) {
+        setQuestions(result.data);
+      } else {
         toast({
           variant: "destructive",
           title: "Failed to load questions",
-          description: "Could not load chat history. Please check your connection or permissions."
-        })
-        setLoading(false);
-    });
+          description: result.error || "Could not load question history.",
+        });
+      }
+      setLoading(false);
+    }
 
-    return () => unsubscribe();
-  }, [db, toast]);
+    fetchQuestions();
+  }, [toast]);
 
   if (loading) {
     return (

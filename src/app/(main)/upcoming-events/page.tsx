@@ -3,20 +3,11 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { EventList } from "./_components/EventList";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { addEvent } from "./actions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 
 export default function UpcomingEventsPage() {
   
-  // This is a placeholder for an admin feature.
-  // In a real app, this would be behind authentication.
-  const SeedEventsButton = () => (
-    <form action={addEvent}>
-      <button type="submit" className="hidden">Seed Events</button>
-    </form>
-  )
-
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
@@ -32,8 +23,6 @@ export default function UpcomingEventsPage() {
         </AlertDescription>
       </Alert>
       
-      <SeedEventsButton />
-
       <Suspense fallback={<Skeleton className="h-[400px] w-full bg-gray-200/80" />}>
         <EventList />
       </Suspense>

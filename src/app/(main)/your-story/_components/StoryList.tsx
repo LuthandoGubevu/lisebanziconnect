@@ -2,14 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  collection,
-  query,
-  orderBy,
-  onSnapshot,
-  Timestamp,
-} from "firebase/firestore";
-import { useFirebase } from "@/firebase/provider";
+import { Timestamp } from "firebase/firestore";
 import type { Story } from "@/lib/types";
 import {
   Card,
@@ -21,12 +14,21 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { errorEmitter } from "@/firebase/error-emitter";
-import { FirestorePermissionError } from "@/firebase/errors";
+import { getStories } from "../actions";
 
 function formatTimestamp(timestamp: Timestamp | null) {
   if (!timestamp) return "Just now";
-  return new Date(timestamp.seconds * 1000).toLocaleDateString("en-US", {
+  let date: Date;
+  if (typeof timestamp === 'string') {
+    date = new Date(timestamp);
+  } else if (timestamp && 'seconds' in timestamp) {
+    date = (timestamp as Timestamp).toDate();
+  } else if (timestamp && '_seconds' in timestamp) {
+    date = new Date((timestamp as any)._seconds * 1000);
+  } else {
+    return "Invalid date";
+  }
+  return date.toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
     year: "numeric",
@@ -36,39 +38,25 @@ function formatTimestamp(timestamp: Timestamp | null) {
 export function StoryList() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
-  const { db } = useFirebase();
   const { toast } = useToast();
 
 
   useEffect(() => {
-    const q = query(collection(db, "stories"), orderBy("createdAt", "desc"));
-    const unsubscribe = onSnapshot(
-      q,
-      (querySnapshot) => {
-        const storiesData: Story[] = [];
-        querySnapshot.forEach((doc) => {
-          storiesData.push({ id: doc.id, ...doc.data() } as Story);
-        });
-        setStories(storiesData);
+    async function fetchStories() {
+        const result = await getStories();
+        if (result.success && result.data) {
+            setStories(result.data);
+        } else {
+            toast({
+                variant: "destructive",
+                title: "Failed to load stories",
+                description: result.error || "Could not load stories."
+            });
+        }
         setLoading(false);
-      },
-      (error) => {
-        const permissionError = new FirestorePermissionError({
-          path: "stories",
-          operation: 'list',
-        });
-        errorEmitter.emit('permission-error', permissionError);
-        toast({
-          variant: "destructive",
-          title: "Permission Denied",
-          description: "You don't have permission to view stories."
-        });
-        setLoading(false);
-      }
-    );
-
-    return () => unsubscribe();
-  }, [db, toast]);
+    }
+    fetchStories();
+  }, [toast]);
 
   if (loading) {
     return (
