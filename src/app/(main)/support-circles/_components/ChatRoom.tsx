@@ -71,7 +71,7 @@ export function ChatRoom() {
       }
     );
     return () => unsubscribe();
-  }, [db, toast]);
+  }, [db]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -96,23 +96,22 @@ export function ChatRoom() {
 
     const messagesCollectionRef = collection(db, "support_circle_messages");
 
-    addDoc(messagesCollectionRef, messageData)
-        .then(() => {
-            form.reset({text: "", sender: values.sender}); 
-        })
-        .catch((error) => {
-             const permissionError = new FirestorePermissionError({
-                path: messagesCollectionRef.path,
-                operation: 'create',
-                requestResourceData: messageData
-             });
-             errorEmitter.emit('permission-error', permissionError);
-             toast({
-                variant: "destructive",
-                title: "Failed to send message",
-                description: "Could not send message. Please try again.",
-            });
+    try {
+        await addDoc(messagesCollectionRef, messageData);
+        form.reset({text: "", sender: user.displayName || ""}); 
+    } catch (error) {
+         const permissionError = new FirestorePermissionError({
+            path: messagesCollectionRef.path,
+            operation: 'create',
+            requestResourceData: messageData
+         });
+         errorEmitter.emit('permission-error', permissionError);
+         toast({
+            variant: "destructive",
+            title: "Failed to send message",
+            description: "You do not have permission to send a message.",
         });
+    }
   }
 
   return (
@@ -145,44 +144,25 @@ export function ChatRoom() {
       </div>
       <div className="p-4 border-t border-gray-200 bg-white/80 backdrop-blur-sm rounded-b-2xl">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-4">
-            <div className="flex-1 grid gap-4">
-              <FormField
-                control={form.control}
-                name="text"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormControl>
-                      <Input
-                        autoComplete="off"
-                        placeholder="Type your message..."
-                        className="bg-white/80 backdrop-blur-sm border-gray-300 shadow-inner"
-                        {...field}
-                        disabled={permissionError}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                  control={form.control}
-                  name="sender"
-                  render={({ field }) => (
-                    <FormItem className="w-full md:w-1/2">
-                      <FormControl>
-                        <Input
-                          autoComplete="off"
-                          placeholder="Your Name"
-                           className="bg-white/80 backdrop-blur-sm border-gray-300 shadow-inner text-sm"
-                          {...field}
-                           disabled={!!user?.displayName}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-            </div>
-            <Button type="submit" size="icon" disabled={isSubmitting || !user || permissionError} className="aspect-square h-auto self-stretch">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-center gap-2">
+            <FormField
+              control={form.control}
+              name="text"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormControl>
+                    <Input
+                      autoComplete="off"
+                      placeholder={user ? "Type your message..." : "Please sign in to chat"}
+                      className="bg-white/80 backdrop-blur-sm border-gray-300 shadow-inner"
+                      {...field}
+                      disabled={!user || permissionError || isSubmitting}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <Button type="submit" size="icon" disabled={isSubmitting || !user || permissionError}>
               <Send className="size-5" />
               <span className="sr-only">Send</span>
             </Button>
