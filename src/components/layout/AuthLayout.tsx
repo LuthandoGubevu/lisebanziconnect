@@ -15,7 +15,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!loading) {
       if (user && isAuthPage) {
-        router.push("/ask-a-mentor");
+        router.push("/support-circles");
       }
       if (!user && !isAuthPage) {
         router.push("/");
