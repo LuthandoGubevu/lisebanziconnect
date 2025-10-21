@@ -79,7 +79,6 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
       <Sidebar side="left" collapsible="icon" variant="sidebar">
         <SidebarHeader className="flex items-center justify-between">
             <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl">
-            <Siren className="size-6 text-blue-600" />
             <span className="group-data-[collapsible=icon]:hidden">Lisebanzi</span>
             </Link>
             {isMobile && <SidebarTrigger />}
