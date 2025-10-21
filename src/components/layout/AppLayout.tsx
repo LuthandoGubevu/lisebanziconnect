@@ -81,7 +81,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
         <SidebarHeader className="flex items-center justify-between">
             <Link href="/ask-a-mentor" className="flex items-center gap-2 font-bold text-xl">
             <Siren className="size-6 text-blue-600" />
-            <span>Lisebanzi</span>
+            <span className="group-data-[collapsible=icon]:hidden">Lisebanzi</span>
             </Link>
             {isMobile && <SidebarTrigger />}
         </SidebarHeader>
@@ -100,7 +100,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
                     >
                         <Link href={item.href}>
                           {item.icon}
-                          <span>{item.label}</span>
+                          <span className="group-data-[collapsible=icon]:hidden">{item.label}</span>
                         </Link>
                     </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -113,7 +113,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
             <SidebarMenuItem>
               <SidebarMenuButton onClick={handleSignOut} tooltip={{ children: "Log Out" }} className="justify-start">
                 <LogOut className="size-5" />
-                <span>Log Out</span>
+                <span className="group-data-[collapsible=icon]:hidden">Log Out</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
