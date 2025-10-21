@@ -119,7 +119,7 @@ export function StoryList() {
   return (
     <div className="space-y-6">
       {storiesToDisplay.map((story) => (
-        <Card key={story.id} className="shadow-md hover:shadow-lg transition-shadow duration-300 rounded-xl bg-white/80 backdrop-blur-lg border-gray-200 w-full">
+        <Card key={story.id} className="shadow-md hover:shadow-lg transition-shadow duration-300 rounded-xl bg-white/80 backdrop-blur-lg border-gray-200">
           <CardHeader className="p-6">
             <CardTitle className="text-blue-600 text-xl">{story.title}</CardTitle>
             <CardDescription className="text-xs text-gray-500 pt-1">

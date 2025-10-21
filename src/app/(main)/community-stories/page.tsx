@@ -12,7 +12,7 @@ export default function CommunityStoriesPage() {
         title="Community Stories"
         description="Read inspirational stories of resilience and hope from others in the community."
       />
-       <div className="w-full max-w-2xl mx-auto">
+       <div className="w-full max-w-3xl mx-auto px-4">
         <StoryList />
       </div>
     </div>
