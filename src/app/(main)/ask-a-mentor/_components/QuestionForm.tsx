@@ -20,10 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Send } from "lucide-react";
 import React from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useFirebase } from "@/firebase/provider";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { errorEmitter } from "@/firebase/error-emitter";
-import { FirestorePermissionError } from "@/firebase/errors";
+import { askQuestion } from "../actions";
 
 const questionSchema = z.object({
   name: z.string().optional(),
@@ -38,7 +35,6 @@ type QuestionFormValues = z.infer<typeof questionSchema>;
 export function QuestionForm() {
   const { toast } = useToast();
   const { user } = useAuth();
-  const { db } = useFirebase();
   const form = useForm<QuestionFormValues>({
     resolver: zodResolver(questionSchema),
     defaultValues: {
@@ -67,37 +63,23 @@ export function QuestionForm() {
     }
     setIsSubmitting(true);
 
-    const questionData = {
-      userId: user.uid,
-      name: values.name || user.displayName || "Anonymous",
-      question: values.question,
-      answer: "",
-      createdAt: serverTimestamp(),
-    };
+    const result = await askQuestion(values, user.uid, user.displayName);
 
-    const questionsCollectionRef = collection(db, 'questions');
+    if (result.success) {
+      toast({
+        title: "Success!",
+        description: "Your question has been submitted.",
+      });
+      form.reset({ question: "", name: user.displayName || "" });
+    } else {
+       toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: result.error || "There was a problem submitting your question.",
+      });
+    }
 
-    addDoc(questionsCollectionRef, questionData).then(() => {
-        toast({
-            title: "Success!",
-            description: "Your question has been submitted.",
-        });
-        form.reset({ question: "", name: user.displayName || "" });
-    }).catch((error) => {
-        const permissionError = new FirestorePermissionError({
-          path: questionsCollectionRef.path,
-          operation: 'create',
-          requestResourceData: questionData,
-        });
-        errorEmitter.emit('permission-error', permissionError);
-        toast({
-            variant: "destructive",
-            title: "Uh oh! Something went wrong.",
-            description: "There was a problem submitting your question.",
-        });
-    }).finally(() => {
-        setIsSubmitting(false);
-    });
+    setIsSubmitting(false);
   }
 
   return (
