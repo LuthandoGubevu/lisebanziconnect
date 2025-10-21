@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, onSnapshot, query, orderBy, Timestamp } from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy, where, Timestamp } from "firebase/firestore";
 import type { Question } from "@/lib/types";
 import { useFirebase } from "@/firebase/provider";
 import {
@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useAuth } from "@/hooks/useAuth";
 
 function formatTimestamp(timestamp: Timestamp | string | null) {
   if (!timestamp) return "Just now";
@@ -44,9 +45,19 @@ export function QuestionList() {
   const [permissionError, setPermissionError] = useState(false);
   const { toast } = useToast();
   const { db } = useFirebase();
+  const { user } = useAuth();
 
   useEffect(() => {
-    const q = query(collection(db, "questions"), orderBy("createdAt", "desc"));
+    if (!user) {
+        setLoading(false);
+        return;
+    };
+
+    const q = query(
+        collection(db, "questions"), 
+        where("userId", "==", user.uid),
+        orderBy("createdAt", "desc")
+    );
     const unsubscribe = onSnapshot(
       q,
       (querySnapshot) => {
@@ -70,7 +81,7 @@ export function QuestionList() {
     );
 
     return () => unsubscribe();
-  }, [db, toast]);
+  }, [db, toast, user]);
 
   if (loading) {
     return (
@@ -81,6 +92,15 @@ export function QuestionList() {
       </div>
     );
   }
+  
+  if (!user) {
+    return (
+        <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-64 border-gray-300">
+            <h3 className="text-xl font-semibold text-gray-500">Please sign in</h3>
+            <p className="text-gray-500">Sign in to see your submitted questions.</p>
+        </div>
+    )
+  }
 
   if (permissionError) {
     return (
@@ -88,7 +108,7 @@ export function QuestionList() {
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Content Unavailable</AlertTitle>
         <AlertDescription>
-          We're currently experiencing technical difficulties and cannot load the questions. Our team has been notified. Please try again later.
+          We're currently experiencing technical difficulties and cannot load your questions. Our team has been notified. Please try again later.
         </AlertDescription>
       </Alert>
     )
@@ -98,7 +118,7 @@ export function QuestionList() {
     return (
         <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-64 border-gray-300">
             <h3 className="text-xl font-semibold text-gray-500">No questions yet</h3>
-            <p className="text-gray-500">Be the first one to ask a question!</p>
+            <p className="text-gray-500">Ask a question and it will appear here.</p>
         </div>
     )
   }

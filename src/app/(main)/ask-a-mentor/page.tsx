@@ -10,7 +10,7 @@ export default function AskAMentorPage() {
     <div className="flex flex-col gap-8">
       <PageHeader
         title="Ask a Mentor"
-        description="Have a question? Ask our experienced mentors. All questions can be submitted anonymously."
+        description="Have a question? Ask our experienced mentors. Your questions and their answers will appear below."
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

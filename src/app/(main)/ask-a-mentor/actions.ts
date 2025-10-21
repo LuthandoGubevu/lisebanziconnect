@@ -1,49 +1,11 @@
 
 "use server";
 
-import { z } from "zod";
-import { getFirestore } from "firebase-admin/firestore";
-import { initializeAdminApp } from "@/firebase/admin";
-import { revalidatePath } from "next/cache";
+// This file is no longer used for submitting questions as it has been moved to a client-side implementation 
+// in QuestionForm.tsx for better error handling and real-time feedback.
+// It is kept for potential future server-side logic.
 
-const QuestionSchema = z.object({
-  name: z.string().optional(),
-  question: z
-    .string()
-    .min(10, "Question must be at least 10 characters long.")
-    .max(1000, "Question must be less than 1000 characters."),
-});
-
-export async function askQuestion(values: z.infer<typeof QuestionSchema>, userId: string, userDisplayName: string | null) {
-  const { app } = await initializeAdminApp();
-  const db = getFirestore(app);
-
-  if (!userId) {
-    return { success: false, error: "You must be logged in to ask a question." };
-  }
-
-  const validatedFields = QuestionSchema.safeParse(values);
-
-  if (!validatedFields.success) {
-    return {
-      success: false,
-      error: "Invalid data provided.",
-    };
-  }
-
-  try {
-    await db.collection("questions").add({
-      userId: userId,
-      name: validatedFields.data.name || userDisplayName || "Anonymous",
-      question: validatedFields.data.question,
-      answer: "",
-      createdAt: new Date(),
-    });
-
-    revalidatePath("/ask-a-mentor");
-    return { success: true };
-  } catch (error) {
-    console.error("Error adding document: ", error);
-    return { success: false, error: "Failed to submit question. Please try again." };
-  }
+export async function askQuestion() {
+    // Deprecated: This logic is now handled on the client.
+    return { success: false, error: "This action is deprecated." };
 }
