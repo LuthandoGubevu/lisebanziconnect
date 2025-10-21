@@ -1,61 +1,121 @@
+/**
+ * @fileoverview Firestore Security Rules for Prototyping.
+ *
+ * Core Philosophy:
+ * This ruleset prioritizes a highly secure, user-centric authorization model while relaxing data shape validation for rapid prototyping.
+ * It enforces strict ownership and role-based access control, assuming all data is private unless explicitly made public.
+ *
+ * Data Structure:
+ * The Firestore database is structured with top-level collections for users, questions, stories, support circle messages, and events.
+ * User-specific data is stored under `/users/{userId}`.
+ *
+ * Key Security Decisions:
+ * - User listing is explicitly denied.
+ * - All write operations require authentication.
+ * - Public read access is granted to the 'questions', 'stories', 'support_circle_messages' and 'events' collections.
+ *
+ * Denormalization for Authorization:
+ * The current schema includes a userId on the questions, stories, and support_circle_messages collections. This allows for simple, performant rules that do not require complex queries.
+ */
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper functions
+    /**
+     * @description Checks if the request is authenticated.
+     */
     function isSignedIn() {
       return request.auth != null;
     }
 
+    /**
+     * @description Checks if the user ID matches the authenticated user's ID.
+     */
     function isOwner(userId) {
-      return request.auth.uid == userId;
+      return isSignedIn() && request.auth.uid == userId;
     }
 
-    // Rules for user profiles
+    /**
+     * @description Checks if the user ID matches the authenticated user's ID and if the document exists.
+     */
+    function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Rules for user profiles.
+     * @path /users/{userId}
+     * @allow (create) - User with matching ID can create their profile.
+     * @allow (get, update, delete) - User with matching ID can read, update, and delete their profile.
+     * @deny (list) - Listing all users is not allowed.
+     * @deny (create, update, delete) - Other users cannot create, update, or delete this profile.
+     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
+     */
     match /users/{userId} {
-      // Anyone can read a user's profile
-      allow read: if true;
-      // Only the user themselves can create or update their profile
-      allow write: if isSignedIn() && isOwner(userId);
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
-    // Rules for questions
+    /**
+     * @description Rules for questions.
+     * @path /questions/{questionId}
+     * @allow (get, list) - All users can read questions.
+     * @allow (create) - Any authenticated user can create a question with their user ID.
+     * @allow (update, delete) - Only the user who created the question can update or delete it.
+     * @deny (create) - If the question doesn't contain their user id.
+     * @principle Allows public read access while enforcing document ownership for writes.
+     */
     match /questions/{questionId} {
-      // Anyone can read questions that have been answered.
-      allow read: if resource.data.answer != "";
-      // Authenticated users can create new questions.
-      allow create: if isSignedIn();
-      // No one can update or delete questions through the client.
-      allow update, delete: if false;
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isExistingOwner(resource.data.userId);
+      allow delete: if isExistingOwner(resource.data.userId);
     }
 
-    // Rules for stories
+    /**
+     * @description Rules for stories.
+     * @path /stories/{storyId}
+     * @allow (get, list) - All users can read stories.
+     * @allow (create) - Any authenticated user can create a story with their user ID.
+     * @allow (update, delete) - Only the user who created the story can update or delete it.
+     * @deny (create) - If the story doesn't contain their user id.
+     * @principle Allows public read access while enforcing document ownership for writes.
+     */
     match /stories/{storyId} {
-      // Anyone can read stories
-      allow read: if true;
-      // Authenticated users can create new stories
-      allow create: if isSignedIn();
-       // No one can update or delete stories through the client.
-      allow update, delete: if false;
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isExistingOwner(resource.data.userId);
+      allow delete: if isExistingOwner(resource.data.userId);
     }
 
-    // Rules for support circle messages
+    /**
+     * @description Rules for support circle messages.
+     * @path /support_circle_messages/{messageId}
+     * @allow (get, list) - All users can read support circle messages.
+     * @allow (create) - Any authenticated user can create a message with their user ID.
+     * @allow (update, delete) - No one can update or delete messages after creation.
+     * @deny (create) - If the message doesn't contain their user id.
+     * @principle Allows public read access and enforces that messages can't be edited or deleted.
+     */
     match /support_circle_messages/{messageId} {
-      // Anyone can read messages
-      allow read: if true;
-      // Authenticated users can send messages
-      allow create: if isSignedIn();
-       // No one can update or delete messages through the client.
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
       allow update, delete: if false;
     }
 
-    // Rules for events
+    /**
+     * @description Rules for events.
+     * @path /events/{eventId}
+     * @allow (get, list) - All users can read events.
+     * @allow (create, update, delete) - No write permissions are granted.
+     * @principle Allows public read access with no write access.
+     */
     match /events/{eventId} {
-      // Anyone can read events
-      allow read: if true;
-      // Events are admin-only writes
-      allow write: if false;
+      allow get, list: if true;
+      allow create, update, delete: if false;
     }
   }
 }
