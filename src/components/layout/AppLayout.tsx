@@ -110,6 +110,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
+            <DistressCallButton />
             <SidebarMenuItem>
               <SidebarMenuButton onClick={handleSignOut} tooltip={{ children: "Log Out" }} className="justify-start">
                 <LogOut className="size-5" />
@@ -123,7 +124,6 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
       <SidebarInset>
         <Header />
         <main className="flex-1 p-4 sm:p-6 pb-24">{children}</main>
-        <DistressCallButton />
       </SidebarInset>
     </>
   );

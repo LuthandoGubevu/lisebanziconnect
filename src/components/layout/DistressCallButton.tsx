@@ -12,7 +12,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "../ui/button";
 import { Siren } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -20,6 +19,7 @@ import { useFirebase } from "@/firebase/provider";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
+import { SidebarMenuItem, SidebarMenuButton } from "../ui/sidebar";
 
 export function DistressCallButton() {
   const { toast } = useToast();
@@ -66,14 +66,18 @@ export function DistressCallButton() {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button
-          variant="destructive"
-          className="fixed bottom-6 right-6 z-20 h-16 w-16 rounded-full shadow-2xl animate-pulse"
-        >
-          <Siren className="h-8 w-8" />
-        </Button>
-      </AlertDialogTrigger>
+      <SidebarMenuItem>
+         <AlertDialogTrigger asChild>
+            <SidebarMenuButton
+              variant="destructive"
+              className="justify-start bg-red-600/15 text-red-600 hover:bg-red-600/25 hover:text-red-700"
+              tooltip={{ children: "Distress Call" }}
+            >
+                <Siren className="size-5" />
+                <span className="group-data-[collapsible=icon]:hidden">Distress Call</span>
+            </SidebarMenuButton>
+          </AlertDialogTrigger>
+      </SidebarMenuItem>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Confirm Distress Call</AlertDialogTitle>
@@ -84,7 +88,7 @@ export function DistressCallButton() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDistressCall}>
+          <AlertDialogAction onClick={handleDistressCall} className="bg-red-600 hover:bg-red-700">
             Yes, Send Signal
           </AlertDialogAction>
         </AlertDialogFooter>
