@@ -15,15 +15,16 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { addEvent } from "../actions";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-function formatTimestamp(timestamp: Timestamp | null) {
+function formatTimestamp(timestamp: Timestamp | null | Date) {
   if (!timestamp) return "Date TBD";
   let date: Date;
-  if (typeof timestamp === 'string') {
+  if (timestamp instanceof Date) {
+    date = timestamp;
+  } else if (typeof timestamp === 'string') {
     date = new Date(timestamp);
   } else if (timestamp && 'seconds' in timestamp) {
     date = (timestamp as Timestamp).toDate();
@@ -40,6 +41,13 @@ function formatTimestamp(timestamp: Timestamp | null) {
   });
 }
 
+const mockEvent: Event = {
+  id: "mock-event-1",
+  title: "Community Meet & Greet",
+  description: "An online event to welcome new members, share stories, and get to know the community. All are welcome!",
+  date: new Date(new Date().setDate(new Date().getDate() + 14)) as any,
+};
+
 export function EventList() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,15 +63,7 @@ export function EventList() {
         querySnapshot.forEach(doc => {
           eventsData.push({ id: doc.id, ...doc.data() } as Event)
         });
-
-        if (eventsData.length === 0) {
-            // If no events, seed one.
-            addEvent().then(() => {
-                // The listener will pick up the new event.
-            });
-        } else {
-            setEvents(eventsData);
-        }
+        setEvents(eventsData);
         setLoading(false);
         setPermissionError(false);
       },
@@ -103,7 +103,9 @@ export function EventList() {
     )
   }
 
-  if (events.length === 0 && !loading) {
+  const eventsToDisplay = events.length === 0 ? [mockEvent] : events;
+
+  if (eventsToDisplay.length === 0 && !loading) {
     return (
       <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg h-64 border-gray-300">
         <h3 className="text-xl font-semibold text-gray-500">
@@ -118,7 +120,7 @@ export function EventList() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {events.map((event) => (
+      {eventsToDisplay.map((event) => (
         <Card key={event.id} className="shadow-lg flex flex-col bg-white/80 backdrop-blur-lg border-gray-200">
           <CardHeader>
             <CardTitle className="text-blue-600">{event.title}</CardTitle>
