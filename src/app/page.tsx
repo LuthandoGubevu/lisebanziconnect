@@ -95,15 +95,15 @@ export default function LandingPage() {
         <section className="py-16 md:py-24 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">Our Community in Action</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 justify-center">
+            <div className="flex flex-wrap gap-4 justify-center">
               {galleryImages.map((image) => (
-                <div key={image.id} className="w-[200px] h-[200px] relative rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+                <div key={image.id} className="w-[300px] h-[200px] relative rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
                   <Image
                     src={image.imageUrl}
                     alt={image.description}
-                    width={200}
+                    width={300}
                     height={200}
-                    className="object-cover"
+                    className="object-cover w-full h-full"
                     data-ai-hint={image.imageHint}
                   />
                 </div>
