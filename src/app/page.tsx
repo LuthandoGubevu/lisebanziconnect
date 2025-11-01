@@ -97,12 +97,12 @@ export default function LandingPage() {
             <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">Our Community in Action</h2>
             <div className="flex flex-wrap gap-4 justify-center">
               {galleryImages.map((image) => (
-                <div key={image.id} className="w-[300px] h-[200px] relative rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+                <div key={image.id} className="w-[400px] h-[300px] relative rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
                   <Image
                     src={image.imageUrl}
                     alt={image.description}
-                    width={300}
-                    height={200}
+                    width={400}
+                    height={300}
                     className="object-cover w-full h-full"
                     data-ai-hint={image.imageHint}
                   />
