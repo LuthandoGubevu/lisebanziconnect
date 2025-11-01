@@ -16,16 +16,22 @@ type ImageGalleryProps = {
 
 export function ImageGallery({ images }: ImageGalleryProps) {
   const [selectedImage, setSelectedImage] = useState<ImagePlaceholder | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleImageClick = (image: ImagePlaceholder) => {
+    setSelectedImage(image);
+    setIsDialogOpen(true);
+  };
 
   return (
     <div>
-      <div className="flex flex-wrap gap-4 justify-center">
-        {images.map((image) => (
-          <Dialog key={image.id}>
-            <DialogTrigger asChild>
+       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <div className="flex flex-wrap gap-4 justify-center">
+          {images.map((image) => (
               <div
+                key={image.id}
                 className="w-[400px] h-[300px] relative rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow cursor-pointer"
-                onClick={() => setSelectedImage(image)}
+                onClick={() => handleImageClick(image)}
               >
                 <Image
                   src={image.imageUrl}
@@ -36,21 +42,20 @@ export function ImageGallery({ images }: ImageGalleryProps) {
                   data-ai-hint={image.imageHint}
                 />
               </div>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl p-0 bg-transparent border-0">
-              {selectedImage && (
-                <Image
-                  src={selectedImage.imageUrl}
-                  alt={selectedImage.description}
-                  width={1200}
-                  height={900}
-                  className="rounded-lg object-contain"
-                />
-              )}
-            </DialogContent>
-          </Dialog>
-        ))}
-      </div>
+          ))}
+        </div>
+        <DialogContent className="max-w-4xl p-0 bg-transparent border-0">
+          {selectedImage && (
+            <Image
+              src={selectedImage.imageUrl}
+              alt={selectedImage.description}
+              width={1200}
+              height={900}
+              className="rounded-lg object-contain"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
