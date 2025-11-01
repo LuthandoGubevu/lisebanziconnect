@@ -1,5 +1,4 @@
 
-'use client';
 import { AppLayout } from "@/components/layout/AppLayout";
 import { AuthLayout } from "@/components/layout/AuthLayout";
 
