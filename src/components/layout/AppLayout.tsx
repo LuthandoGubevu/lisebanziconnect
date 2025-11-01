@@ -22,7 +22,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { Header } from "./Header";
-import { useAuth } from "@/hooks/useAuth";
 import {
   SidebarProvider,
   Sidebar,
@@ -131,12 +130,6 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
 }
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-
-  if (loading || !user) {
-    return null; // Or a loading spinner, but null is fine to prevent layout flashes
-  }
-
   return (
     <SidebarProvider>
         <AppLayoutContent>{children}</AppLayoutContent>
