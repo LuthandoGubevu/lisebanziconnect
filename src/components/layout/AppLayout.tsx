@@ -131,10 +131,10 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
 }
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
-  if (!user) {
-    return null; // Or a loading spinner
+  if (loading || !user) {
+    return null; // Or a loading spinner, but null is fine to prevent layout flashes
   }
 
   return (

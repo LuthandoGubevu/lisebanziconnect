@@ -3,7 +3,6 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import { usePathname, useRouter } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
 import React, { useEffect } from "react";
 
 export function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -20,29 +19,29 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
 
     if (!loading) {
       if (user && isAuthPage) {
+        // If user is logged in and tries to access auth page, redirect to dashboard
         router.push("/dashboard");
       }
       if (!user && !isAuthPage) {
+        // If user is not logged in and not on auth page, redirect to auth page
         router.push("/auth");
       }
     }
   }, [user, loading, isAuthPage, isLandingPage, pathname, router]);
 
 
-  // If we are on the landing page, just render the children to avoid hydration errors.
-  if (isLandingPage) {
+  // For public pages, or while auth is loading, just render the content.
+  // The useEffect will handle redirects once auth status is known.
+  if (isLandingPage || isAuthPage || loading) {
     return <>{children}</>;
   }
 
-  // Show a loading skeleton while checking auth status,
-  // or if we are about to redirect.
-  if (loading || (!user && !isAuthPage) || (user && isAuthPage)) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <Skeleton className="h-20 w-20 rounded-full" />
-      </div>
-    );
+  // If user is authenticated and not on a public page, render the authenticated layout.
+  if (user && !isAuthPage) {
+     return <>{children}</>;
   }
   
-  return <>{children}</>;
+  // If no user and not on auth page (and not loading), we are likely redirecting,
+  // so rendering nothing avoids a flash of unstyled content.
+  return null;
 }
