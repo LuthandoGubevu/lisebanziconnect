@@ -14,19 +14,23 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
   const isLandingPage = pathname === "/";
 
   useEffect(() => {
-    if (loading || isLandingPage) {
-      return; // Do nothing while loading or on the landing page
-    }
-
-    if (user && isAuthPage) {
-      // If user is logged in and tries to access auth page, redirect to dashboard
-      router.push("/dashboard");
+    if (loading) {
+      return; // Do nothing while loading
     }
     
-    if (!user && !isAuthPage) {
-      // If user is not logged in and not on auth or landing page, redirect to auth
+    // If on a public page, do nothing.
+    if (isLandingPage || isAuthPage) {
+        if(user && isAuthPage) {
+            router.push("/dashboard");
+        }
+        return;
+    }
+
+    if (!user) {
+      // If user is not logged in and not on a public page, redirect to auth
       router.push("/auth");
     }
+
   }, [user, loading, isAuthPage, isLandingPage, pathname, router]);
 
   // Show a loading skeleton for protected pages while authentication is in progress
@@ -39,7 +43,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
   }
 
   // If the user is authenticated, or if it's a public page, show the content
-  if (user || isLandingPage || isAuthPage) {
+  if ((user && !isAuthPage) || isLandingPage || isAuthPage) {
     return <>{children}</>;
   }
 
