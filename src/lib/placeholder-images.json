@@ -5,6 +5,42 @@
       "description": "A diverse group of people connecting and supporting each other.",
       "imageUrl": "https://images.unsplash.com/photo-1541976844346-f18aeac57b06?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjb21tdW5pdHklMjBzdXBwb3J0fGVufDB8fHx8MTc1OTY4MDYwNXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "community support"
+    },
+    {
+      "id": "gallery-1",
+      "description": "Community members participating in a workshop.",
+      "imageUrl": "https://images.unsplash.com/photo-1761410403735-108d974d9a76?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb21tdW5pdHklMjB3b3Jrc2hvcHxlbnwwfHx8fDE3NjE5OTQ1NDN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "community workshop"
+    },
+    {
+      "id": "gallery-2",
+      "description": "A support group session in progress.",
+      "imageUrl": "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzdXBwb3J0JTIwZ3JvdXB8ZW58MHx8fHwxNzYxOTA3MDkxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "support group"
+    },
+    {
+      "id": "gallery-3",
+      "description": "Volunteers working together.",
+      "imageUrl": "https://images.unsplash.com/photo-1758599668209-783bd3691ec8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8dm9sdW50ZWVycyUyMGhlbHBpbmd8ZW58MHx8fHwxNzYxOTk0NTQyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "volunteers helping"
+    },
+    {
+      "id": "gallery-4",
+      "description": "A person receiving guidance and counseling.",
+      "imageUrl": "https://images.unsplash.com/photo-1758273240373-370993d0275d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjb3Vuc2VsaW5nJTIwc2Vzc2lvbnxlbnwwfHx8fDE3NjE5OTQ1NDN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "counseling session"
+    },
+    {
+      "id": "gallery-5",
+      "description": "Smiling faces from the community.",
+      "imageUrl": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxoYXBweSUyMHBlb3BsZXxlbnwwfHx8fDE3NjE5NDUwMjZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "happy people"
+    },
+    {
+      "id": "gallery-6",
+      "description": "An outdoor community event.",
+      "imageUrl": "https://images.unsplash.com/photo-1528605105345-5344ea20e269?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjb21tdW5pdHklMjBldmVudHxlbnwwfHx8fDE3NjE5Njk4NTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "community event"
     }
   ]
 }
