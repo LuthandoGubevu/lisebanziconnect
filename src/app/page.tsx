@@ -57,8 +57,18 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Features Section */}
+        {/* About Us Section */}
         <section className="py-16 md:py-24 bg-white">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 className="text-3xl font-bold text-gray-800">Who We Are</h2>
+                <p className="mt-4 max-w-3xl mx-auto text-lg text-gray-600">
+                    Located in the heart of East London, Lisebanzi Foundation is a non-profit organization dedicated to providing comprehensive support services to individuals and communities affected by Gender-Based Violence (GBV), substance abuse, and other social and economic challenges.
+                </p>
+            </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-16 md:py-24 bg-gray-50">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-3xl font-bold text-center text-gray-800">Our Pillars of Support</h2>
                 <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
