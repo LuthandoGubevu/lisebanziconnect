@@ -6,7 +6,7 @@ import Image from 'next/image';
 import {
   Dialog,
   DialogContent,
-  DialogTrigger,
+  DialogTitle,
 } from '@/components/ui/dialog';
 import type { ImagePlaceholder } from '@/lib/placeholder-images';
 
@@ -46,13 +46,16 @@ export function ImageGallery({ images }: ImageGalleryProps) {
         </div>
         <DialogContent className="max-w-4xl p-0 bg-transparent border-0">
           {selectedImage && (
-            <Image
-              src={selectedImage.imageUrl}
-              alt={selectedImage.description}
-              width={1200}
-              height={900}
-              className="rounded-lg object-contain"
-            />
+            <>
+              <DialogTitle className="sr-only">{selectedImage.description}</DialogTitle>
+              <Image
+                src={selectedImage.imageUrl}
+                alt={selectedImage.description}
+                width={1200}
+                height={900}
+                className="rounded-lg object-contain"
+              />
+            </>
           )}
         </DialogContent>
       </Dialog>
