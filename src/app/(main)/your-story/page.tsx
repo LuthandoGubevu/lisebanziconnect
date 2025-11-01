@@ -2,8 +2,6 @@
 import { PageHeader } from "@/components/ui/PageHeader";
 import { StoryForm } from "./_components/StoryForm";
 import { StoryList } from "./_components/StoryList";
-import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export default function YourStoryPage() {
   return (
@@ -18,9 +16,7 @@ export default function YourStoryPage() {
           <StoryForm />
         </div>
         <div className="lg:col-span-2">
-          <Suspense fallback={<Skeleton className="h-[500px] w-full" />}>
-            <StoryList />
-          </Suspense>
+          <StoryList />
         </div>
       </div>
     </div>
