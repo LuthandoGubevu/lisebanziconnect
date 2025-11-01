@@ -31,7 +31,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
        <head>
         <meta name="theme-color" content="#ffffff" />
         <meta name="mobile-web-app-capable" content="yes" />
@@ -40,7 +40,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Lisebanzi Connect" />
         <link rel="apple-touch-icon" href="/192x192.png" />
       </head>
-      <body className={`${inter.variable} font-sans antialiased bg-gray-50 text-gray-900`}>
+      <body className={`${inter.variable} font-sans antialiased bg-gray-50 text-gray-900 h-full`}>
         <FirebaseClientProvider config={firebaseConfig}>
           {children}
         </FirebaseClientProvider>

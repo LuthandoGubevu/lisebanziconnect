@@ -50,8 +50,8 @@ export function SignInForm() {
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: error.message,
+        title: "Sign in failed.",
+        description: "Please check your email and password.",
       });
     } finally {
         setIsSubmitting(false);

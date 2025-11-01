@@ -40,9 +40,11 @@ import { DistressCallButton } from "./DistressCallButton";
 import { useFirebase } from "@/firebase/provider";
 import { signOut } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
+import Image from "next/image";
 
 
 const navItems = [
+  { href: "/dashboard", label: "Dashboard", icon: <LayoutDashboard className="size-5" /> },
   { href: "/support-circles", label: "Support Circles", icon: <HeartHandshake className="size-5" /> },
   { href: "/my-story", label: "My Story", icon: <BookUser className="size-5" /> },
   { href: "/community-stories", label: "Community Stories", icon: <Users className="size-5" /> },
@@ -79,6 +81,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
       <Sidebar side="left" collapsible="icon" variant="sidebar">
         <SidebarHeader className="flex items-center justify-between">
             <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl">
+            <Image src="/Lisebanzi Foundation .jpg" alt="Logo" width={32} height={32} className="rounded-full" />
             <span className="group-data-[collapsible=icon]:hidden">Lisebanzi</span>
             </Link>
             {isMobile && <SidebarTrigger />}
