@@ -4,10 +4,7 @@
 import React, { useMemo } from 'react';
 import { initializeFirebase } from './index';
 import { FirebaseProvider } from './provider';
-import { AuthLayout } from '@/components/layout/AuthLayout';
-import { Skeleton } from '@/components/ui/skeleton';
 import type { FirebaseOptions } from 'firebase/app';
-
 
 export function FirebaseClientProvider({
   children,
@@ -20,18 +17,16 @@ export function FirebaseClientProvider({
   const firebaseInstances = useMemo(() => initializeFirebase(config), [config]);
 
   if (!firebaseInstances) {
-    return (
-       <div className="flex items-center justify-center h-screen">
-        <Skeleton className="h-20 w-20 rounded-full" />
-      </div>
-    );
+    // Return children directly if Firebase isn't initialized (e.g., on server).
+    // The AuthLayout will handle redirection on the client.
+    return <>{children}</>;
   }
   
   const { app, auth, db } = firebaseInstances;
   
   return (
     <FirebaseProvider app={app} auth={auth} db={db}>
-      <AuthLayout>{children}</AuthLayout>
+      {children}
     </FirebaseProvider>
   );
 }
