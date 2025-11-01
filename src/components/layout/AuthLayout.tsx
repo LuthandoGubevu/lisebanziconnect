@@ -29,7 +29,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
   }, [user, loading, isAuthPage, isLandingPage, pathname, router]);
 
 
-  // If we are on the landing page, just render the children
+  // If we are on the landing page, just render the children to avoid hydration errors.
   if (isLandingPage) {
     return <>{children}</>;
   }
