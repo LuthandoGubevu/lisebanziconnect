@@ -16,7 +16,7 @@ export default function AuthPage() {
       <Card className="z-10 w-full max-w-md shadow-lg bg-white">
         <div className="flex justify-center pt-6">
           <Image
-            src="/Lisebanzi Foundation .jpg"
+            src="/LF Logo.jpg"
             alt="Lisebanzi Foundation Logo"
             width={120}
             height={120}

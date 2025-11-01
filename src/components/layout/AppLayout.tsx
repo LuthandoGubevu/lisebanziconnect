@@ -81,7 +81,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
       <Sidebar side="left" collapsible="icon" variant="sidebar">
         <SidebarHeader className="flex items-center justify-between">
             <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl">
-            <Image src="/Lisebanzi Foundation .jpg" alt="Logo" width={32} height={32} className="rounded-full" />
+            <Image src="/LF Logo.jpg" alt="Logo" width={32} height={32} className="rounded-full" />
             <span className="group-data-[collapsible=icon]:hidden">Lisebanzi</span>
             </Link>
             {isMobile && <SidebarTrigger />}

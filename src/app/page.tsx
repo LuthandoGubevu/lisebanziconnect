@@ -13,7 +13,7 @@ export default function LandingPage() {
             <div className="flex items-center">
               <Link href="/" className="flex items-center gap-2 font-bold text-xl">
                 <Image
-                  src="/Lisebanzi Foundation .jpg"
+                  src="/LF Logo.jpg"
                   alt="Lisebanzi Foundation Logo"
                   width={40}
                   height={40}
