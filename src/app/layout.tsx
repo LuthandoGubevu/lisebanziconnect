@@ -5,6 +5,7 @@ import './globals.css';
 import { Inter } from 'next/font/google';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import type { FirebaseOptions } from 'firebase/app';
+import { AuthLayout } from '@/components/layout/AuthLayout';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -42,7 +43,9 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} font-sans antialiased bg-gray-50 text-gray-900 h-full`}>
         <FirebaseClientProvider config={firebaseConfig}>
-          {children}
+          <AuthLayout>
+            {children}
+          </AuthLayout>
         </FirebaseClientProvider>
         <Toaster />
       </body>
