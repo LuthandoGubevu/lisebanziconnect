@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { ImageGallery } from "./_components/ImageGallery";
 
 export default function LandingPage() {
   const galleryImages = PlaceHolderImages.filter(img => img.id.startsWith('gallery-'));
@@ -95,20 +96,7 @@ export default function LandingPage() {
         <section className="py-16 md:py-24 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">Our Community in Action</h2>
-            <div className="flex flex-wrap gap-4 justify-center">
-              {galleryImages.map((image) => (
-                <div key={image.id} className="w-[400px] h-[300px] relative rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-                  <Image
-                    src={image.imageUrl}
-                    alt={image.description}
-                    width={400}
-                    height={300}
-                    className="object-cover w-full h-full"
-                    data-ai-hint={image.imageHint}
-                  />
-                </div>
-              ))}
-            </div>
+            <ImageGallery images={galleryImages} />
           </div>
         </section>
 
