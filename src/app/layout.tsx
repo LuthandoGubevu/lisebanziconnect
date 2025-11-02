@@ -4,7 +4,6 @@ import './globals.css';
 import { Inter } from 'next/font/google';
 import type { FirebaseOptions } from 'firebase/app';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
-import { AuthLayout } from '@/components/layout/AuthLayout';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
