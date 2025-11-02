@@ -17,6 +17,7 @@ import {
   PanelLeft,
   Siren,
   LogOut,
+  Info,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -34,6 +35,7 @@ import {
   SidebarTrigger,
   useSidebar,
   SidebarFooter,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { DistressCallButton } from "./DistressCallButton";
 import { useFirebase } from "@/firebase/provider";
@@ -87,6 +89,21 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
         </SidebarHeader>
         <SidebarContent>
             <SidebarMenu>
+                 <SidebarMenuItem>
+                    <SidebarMenuButton
+                        asChild
+                        isActive={pathname.startsWith("/who-we-are")}
+                        tooltip={{ children: "Who we are", side: "right" }}
+                        className="justify-start"
+                        onClick={() => { if (isMobile) setOpenMobile(false)}}
+                    >
+                        <Link href="/who-we-are">
+                          <Info className="size-5" />
+                          <span className="group-data-[collapsible=icon]:hidden">Who we are</span>
+                        </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarSeparator />
                 {navItems.map((item) => {
                 const isActive = pathname.startsWith(item.href);
                 return (

@@ -18,7 +18,6 @@ export function FirebaseClientProvider({
 
   if (!firebaseInstances) {
     // Return children directly if Firebase isn't initialized (e.g., on server).
-    // The AuthLayout will handle redirection on the client.
     return <>{children}</>;
   }
   
