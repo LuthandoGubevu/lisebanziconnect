@@ -1,7 +1,7 @@
 "use client";
 
 import { PageHeader } from "@/components/ui/PageHeader";
-import { StoryList } from "../your-story/_components/StoryList";
+import { StoryList } from "./_components/StoryList";
 
 // This page will display all publicly shared stories from the community.
 // It reuses the StoryList component from the old 'your-story' page.
