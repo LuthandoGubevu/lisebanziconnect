@@ -1,33 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { SignInForm } from "@/components/auth/SignInForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AuthPage() {
   const [isSigningUp, setIsSigningUp] = useState(false);
-  const { user, loading } = useAuth();
-  const router = useRouter();
 
-  useEffect(() => {
-    if (!loading && user) {
-      router.push("/dashboard");
-    }
-  }, [user, loading, router]);
-
-  if (loading || user) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Skeleton className="h-20 w-20 rounded-full bg-muted" />
-      </div>
-    );
-  }
+  // This page does not need to check auth status.
+  // The protected routes will handle redirection if the user is already logged in.
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-4">
