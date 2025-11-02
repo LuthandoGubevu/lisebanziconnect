@@ -1,3 +1,4 @@
+"use client";
 
 import { PageHeader } from "@/components/ui/PageHeader";
 import { StoryForm } from "../your-story/_components/StoryForm";

@@ -1,3 +1,4 @@
+"use client";
 
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ChatRoom } from "./_components/ChatRoom";
