@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -60,6 +59,7 @@ export function StoryList() {
 
 
   useEffect(() => {
+    if (!db) return;
     const q = query(collection(db, "stories"), orderBy("createdAt", "desc"));
     const unsubscribe = onSnapshot(
       q,
