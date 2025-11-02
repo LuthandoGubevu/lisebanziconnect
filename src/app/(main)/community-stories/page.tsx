@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 "use client";
 
 import { PageHeader } from "@/components/ui/PageHeader";
