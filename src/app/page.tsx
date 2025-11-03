@@ -98,14 +98,12 @@ export default function AuthPage() {
             </CardContent>
           </Card>
           
-          {isSigningUp && (
-            <div className="mt-12">
-               <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-                    Our Community in Action
-                </h2>
-              <ImageGallery images={galleryImages} />
-            </div>
-          )}
+          <div className="mt-12">
+             <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+                  Our Community in Action
+              </h2>
+            <ImageGallery images={galleryImages} />
+          </div>
 
            {/* This section is for mobile/tablet view */}
            <div className="lg:hidden text-center text-sm text-gray-500 pt-8">
