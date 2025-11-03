@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { ImageGallery } from "./_components/ImageGallery";
+import { ImageGallery } from "@/components/shared/ImageGallery";
 
 export default function WhoWeArePage() {
   const heroImage = PlaceHolderImages.find((img) => img.id === "hero-home");

@@ -6,13 +6,16 @@ import { SignInForm } from "@/components/auth/SignInForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ImageGallery } from "@/components/shared/ImageGallery";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 export default function AuthPage() {
   const [isSigningUp, setIsSigningUp] = useState(false);
+  const galleryImages = PlaceHolderImages.filter((img) => img.id.startsWith("gallery-"));
 
   return (
     <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
-      <div className="relative flex flex-col items-center justify-center bg-gray-100 p-12 text-white text-center">
+      <div className="relative hidden lg:flex flex-col items-center justify-center bg-gray-100 p-12 text-white text-center">
          <div 
           className="absolute inset-0 bg-cover bg-center" 
           style={{ backgroundImage: "url('https://images.unsplash.com/photo-1541976844346-f18aeac57b06?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjb21tdW5pdHklMjBzdXBwb3J0fGVufDB8fHx8MTc1OTY4MDYwNXww&ixlib=rb-4.1.0&q=80&w=1080')" }}
@@ -36,7 +39,18 @@ export default function AuthPage() {
         </div>
       </div>
       <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-          <Card className="z-10 w-full max-w-md shadow-xl bg-white/90 backdrop-blur-lg border-gray-200">
+        <div className="w-full max-w-md space-y-8">
+           {/* This section is for mobile/tablet view */}
+          <div className="lg:hidden text-center">
+            <h1 className="text-3xl font-bold tracking-tight text-purple-800">
+              A Safe Space to Heal and Grow
+            </h1>
+            <p className="mt-3 text-base max-w-xl mx-auto text-gray-600">
+              Join Lisebanzi Connect, a supportive community dedicated to empowering survivors, fostering connection, and inspiring hope.
+            </p>
+          </div>
+
+          <Card className="z-10 w-full shadow-xl bg-white/90 backdrop-blur-lg border-gray-200">
             <div className="flex justify-center pt-8">
               <Image
                 src="/LF Logo.jpg"
@@ -83,6 +97,24 @@ export default function AuthPage() {
               </div>
             </CardContent>
           </Card>
+          
+          {isSigningUp && (
+            <div className="mt-12">
+               <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+                    Our Community in Action
+                </h2>
+              <ImageGallery images={galleryImages} />
+            </div>
+          )}
+
+           {/* This section is for mobile/tablet view */}
+           <div className="lg:hidden text-center text-sm text-gray-500 pt-8">
+              <h3 className="font-semibold text-base text-purple-800">Who We Are</h3>
+              <p className="mt-1">
+                 Lisebanzi Foundation is a non-profit organization in East London dedicated to supporting those affected by GBV, substance abuse, and other social challenges.
+              </p>
+          </div>
+        </div>
       </div>
     </div>
   );
