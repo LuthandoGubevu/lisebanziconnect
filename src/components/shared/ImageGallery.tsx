@@ -29,7 +29,7 @@ export function ImageGallery({ images }: ImageGalleryProps) {
     >
       <CarouselContent>
         {images.map((image) => (
-          <CarouselItem key={image.id} className="md:basis-1/2 lg:basis-1/3">
+          <CarouselItem key={image.id} className="basis-full md:basis-1/2 lg:basis-1/3">
             <div className="aspect-square relative group overflow-hidden rounded-lg">
               <Image
                 src={image.imageUrl}
