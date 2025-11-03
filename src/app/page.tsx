@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -13,7 +12,7 @@ export default function AuthPage() {
 
   return (
     <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
-      <div className="relative hidden bg-gray-100 lg:flex flex-col items-center justify-center p-12 text-white text-center">
+      <div className="relative flex flex-col items-center justify-center bg-gray-100 p-12 text-white text-center">
          <div 
           className="absolute inset-0 bg-cover bg-center" 
           style={{ backgroundImage: "url('https://images.unsplash.com/photo-1541976844346-f18aeac57b06?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjb21tdW5pdHklMjBzdXBwb3J0fGVufDB8fHx8MTc1OTY4MDYwNXww&ixlib=rb-4.1.0&q=80&w=1080')" }}
